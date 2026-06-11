@@ -288,13 +288,27 @@ For every question:
     passNote: 'Coastal Engineering grade pending — Research Project 81.3% + Design Project 90% submitted.',
     systemPrompt: `You are a tutor for ENCN442 (Surface Water, Groundwater and Coastal Engineering) at University of Canterbury. Comprehensive final exam covers all four sections.
 
-Sections:
-1. GROUNDWATER (Prof Weingarten) — recharge/discharge, well hydraulics, drawdown, safe yield, unsaturated zone, groundwater quality, surface-groundwater interactions, numerical modelling.
-2. SURFACE WATER MODELLING (Dr Pahlow) — rainfall-runoff, soil-plant-atmosphere continuum, catchment characteristics, climate change impacts, modelling.
-3. COASTAL ENGINEERING (Dr McConnochie) — surface waves, wave modelling, tides, sediment transport, erosion, sea level rise.
-4. SURFACE WATER INFRASTRUCTURE (Prof Cochrane) — channels, culverts, bridges, drop structures.
+The loaded materials are organised into four folders matching the four course sections — refer to these folder names when citing:
 
-For each question: identify which section it belongs to (state explicitly), cite specific lecture content from loaded notes, state relevant equations (Theis, Darcy, Manning, wave equations etc.), surface connections between sections where relevant, hints first.`
+1. GROUNDWATER/ (Prof Weingarten) — recharge/discharge, well hydraulics, drawdown, safe yield, unsaturated zone, groundwater quality, surface-groundwater interactions, numerical modelling (MODFLOW). Exam questions in this section will be similar to past exam papers.
+
+2. SURFACEWATER/ (Dr Pahlow) — rainfall-runoff, soil-plant-atmosphere continuum, catchment characteristics, climate change impacts, modelling (HEC-HMS). Mock exam questions are included in the loaded materials — reference these when generating practice questions.
+
+3. COASTAL/ (Dr McConnochie) — surface waves, wave modelling, tides, sediment transport, erosion, sea level rise. Past ENCN446 exams (last 3 years) are loaded — coastal was previously part of ENCN446. IMPORTANT: Coastal section in the 2026 ENCN442 exam is only ~35 minutes (was 80 min in ENCN446), so expect fewer and smaller questions than past papers show. For wave height analysis, use 1.67·Hs for the 1/100 wave height with assumed Rayleigh distribution (this was flagged as a common student error).
+
+4. SURFACEWATER INFRASTRUCTURE/ (Prof Cochrane) — earth channels, culverts, bridges, drop structures. Review lecture PDF + sample/mock exam questions are loaded. Exam questions will be similar to past exam papers.
+
+EXAM FORMAT NOTE: Equations, diagrams, and tables are PROVIDED with the exam. The student doesn't need to memorize formulas — but must know how to apply them, when to use which equation, and what the variables mean.
+
+For each question:
+- Identify which section folder the question belongs to (state explicitly).
+- Cite specific lecture content from the loaded notes.
+- Reference past papers (COASTAL/ folder) when working through coastal problems.
+- Reference the mock exam questions where relevant.
+- Surface connections between sections where useful (e.g. groundwater discharge to streams connects GROUNDWATER + SURFACEWATER).
+- Hints first, full solutions only when asked.
+
+Common errors to flag: unit consistency (SI vs imperial), drawdown sign convention, wave parameter regimes (deep vs shallow water), culvert flow control type (inlet vs outlet), reference citations (use full citation not just URL).`
   }
 };
 
@@ -303,8 +317,34 @@ const KEY = 'study_tutor_';
 let model = localStorage.getItem(KEY+'model') || 'anthropic/claude-sonnet-4-5';
 
 const PDF_MANIFEST = {
-  struct: [],
-  energy: [],
+  // === ACTIVE THIS WEEK (Energy exam Mon Jun 15, Structures exam Tue Jun 17) ===
+  struct: [
+    // Part 2 module slides (what the exam covers)
+    'mod1.pdf',
+    'mod 2 frames.pdf',
+    'mod3 energy.pdf',
+    // Tutorial solutions — T3-T6 are Part 2; uncomment T1/T2 if needed
+    // 'T1_Soln.pdf',
+    // 'T2_Soln.pdf',
+    'T3 Soln.pdf',
+    'T4 Soln.pdf',
+    'T5 Soln.pdf',
+    'T6_Soln.pdf',
+    // Exam materials
+    'ENCI335-25S1 Final Exam.pdf',
+    'E335Exam26Format.pdf',
+  ],
+  energy: [
+    // TODO: Add subfolder contents — run from inside the repo:
+    //   cd notes/energy && find . -name "*.pdf" -type f | sed "s|^\./|    '|; s|$|',|"
+    // Then paste output here. Subfolders: BATTERIES, FUELS, INDUSTRY, SOLAR, TRANSPORT.
+    'Formula Sheet 3.pdf',
+    'practiceTest3.pdf',
+    'practiceTest3 solutions.pdf',
+  ],
+  // === DORMANT — re-enable after Jun 17 exams ===
+  // Files are committed to /notes/pave and /notes/ground, just not loaded into context.
+  // To re-enable: paste the full lists back from the earlier manifest (still in git history).
   pave: [],
   ground: []
 };
@@ -470,7 +510,9 @@ async function autoLoadPdfs(key) {
     if (state[key].files[filename]) { loaded++; continue; }
     try {
       if (fc) fc.textContent = `Loading ${loaded+1}/${files.length}: ${filename}`;
-      const resp = await fetch(`notes/${key}/${encodeURIComponent(filename)}`);
+      // Encode each path segment separately so subfolders work (e.g. "COASTAL/file.pdf")
+      const pathEncoded = filename.split('/').map(encodeURIComponent).join('/');
+      const resp = await fetch(`notes/${key}/${pathEncoded}`);
       if (!resp.ok) { console.warn(`Could not load ${filename}: HTTP ${resp.status}`); continue; }
       const blob = await resp.blob();
       const b64 = await blobToBase64(blob);
