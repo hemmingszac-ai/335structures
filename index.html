@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENCI335 Study Assistant</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0f1117; color: #e8e8e8; height: 100vh; display: flex; flex-direction: column; }
+  #header { padding: 12px 20px; border-bottom: 1px solid #2a2a3a; display: flex; align-items: center; gap: 12px; background: #161820; }
+  #header h1 { font-size: 15px; font-weight: 600; color: #fff; }
+  #header span { font-size: 12px; color: #888; }
+  #files-bar { padding: 8px 20px; border-bottom: 1px solid #2a2a3a; background: #13141c; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 44px; }
+  #files-bar label { font-size: 12px; color: #888; white-space: nowrap; }
+  .file-chip { background: #1e2030; border: 1px solid #3a3a5c; border-radius: 6px; padding: 3px 10px; font-size: 12px; color: #a0a8d0; display: flex; align-items: center; gap: 6px; }
+  .file-chip button { background: none; border: none; color: #666; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+  .file-chip button:hover { color: #f87171; }
+  #upload-btn { background: #252740; border: 1px dashed #4a4a7a; border-radius: 6px; padding: 4px 12px; font-size: 12px; color: #7a7aaa; cursor: pointer; white-space: nowrap; }
+  #upload-btn:hover { border-color: #7a7aff; color: #9a9aff; }
+  #upload-input { display: none; }
+  #chat-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .msg { display: flex; gap: 10px; max-width: 820px; }
+  .msg.user { flex-direction: row-reverse; align-self: flex-end; }
+  .msg.assistant { align-self: flex-start; }
+  .bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.6; max-width: 680px; white-space: pre-wrap; }
+  .user .bubble { background: #2d2f7a; color: #d8d8ff; border-bottom-right-radius: 4px; }
+  .assistant .bubble { background: #1a1d2e; border: 1px solid #2a2d45; color: #d0d4e8; border-bottom-left-radius: 4px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .user .avatar { background: #4a4db5; color: #c8c8ff; }
+  .assistant .avatar { background: #1e3a5f; color: #60a0d0; }
+  .thinking { color: #666; font-style: italic; }
+  #input-area { padding: 16px 20px; border-top: 1px solid #2a2a3a; background: #13141c; display: flex; gap: 10px; }
+  #input-area textarea { flex: 1; background: #1e2030; border: 1px solid #3a3a5c; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: #e0e0f0; resize: none; outline: none; font-family: inherit; line-height: 1.5; max-height: 120px; }
+  #input-area textarea:focus { border-color: #5a5aaa; }
+  #input-area textarea::placeholder { color: #555; }
+  #send-btn { background: #3a3db5; border: none; border-radius: 10px; width: 44px; height: 44px; cursor: pointer; color: #c0c0ff; font-size: 18px; display: flex; align-items: center; justify-content: center; align-self: flex-end; flex-shrink: 0; }
+  #send-btn:hover { background: #4a4dc5; }
+  #send-btn:disabled { background: #252530; color: #444; cursor: not-allowed; }
+  #api-banner { background: #2a1a0a; border: 1px solid #6a3a0a; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #d0a060; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  #api-banner input { background: #1a1210; border: 1px solid #5a3010; border-radius: 6px; padding: 4px 10px; color: #e0b070; font-size: 13px; flex: 1; outline: none; font-family: monospace; }
+  #api-banner button { background: #5a3010; border: none; border-radius: 6px; padding: 4px 12px; color: #e0b070; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  #api-banner button:hover { background: #7a4020; }
+  .quick-btns { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 12px; }
+  .quick-btn { background: #1e2030; border: 1px solid #3a3a5c; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #8888cc; cursor: pointer; white-space: nowrap; }
+  .quick-btn:hover { border-color: #6a6aaa; color: #aaaae0; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div style="width:32px;height:32px;background:#1e3060;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">🏗️</div>
+  <div>
+    <h1>ENCI335 Structures Study Assistant</h1>
+    <span id="file-count">No notes loaded</span>
+  </div>
+</div>
+
+<div id="files-bar">
+  <label>Notes:</label>
+  <div id="chips"></div>
+  <button id="upload-btn" onclick="document.getElementById('upload-input').click()">+ Add PDFs</button>
+  <input type="file" id="upload-input" accept=".pdf" multiple>
+</div>
+
+<div id="chat-area">
+  <div id="api-banner">
+    <span>🔑</span>
+    <span>Anthropic API key:</span>
+    <input type="password" id="api-key-input" placeholder="sk-ant-..." />
+    <button onclick="saveKey()">Save</button>
+  </div>
+  <div class="msg assistant">
+    <div class="avatar">AI</div>
+    <div class="bubble">Hi! I'm your ENCI335 structures tutor.
+
+Upload your lecture note PDFs and tutorial sheets using the bar above, then ask me anything — a tutorial question, a concept you're stuck on, or ask me to explain a method step by step.
+
+I'll identify the relevant module, cite the theory, state the applicable rules and sign conventions, and give you a hint rather than just the answer (unless you ask for the full solution).
+
+Try asking something like: <em>"T2 Q3 — I'm not sure how to set up the BMD for this frame"</em> or <em>"Explain the stiffness method sign convention"</em></div>
+  </div>
+</div>
+
+<div class="quick-btns" id="quick-btns">
+  <button class="quick-btn" onclick="quickSend('Explain Macaulay bracket rules and when to use them')">Macaulay brackets</button>
+  <button class="quick-btn" onclick="quickSend('What are the stiffness method sign conventions I need to know?')">Stiffness method sign conventions</button>
+  <button class="quick-btn" onclick="quickSend('What topics are covered in each module?')">Module overview</button>
+  <button class="quick-btn" onclick="quickSend('What types of questions appear in the exam?')">Exam question styles</button>
+</div>
+
+<div id="input-area">
+  <textarea id="msg-input" placeholder="Ask a tutorial question, paste a problem, or ask for theory..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+  <button id="send-btn" onclick="sendMessage()">↑</button>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are a structural engineering tutor for ENCI335 (Structural Analysis) at the University of Canterbury. Your role is to help students work through tutorial problems by guiding them with theory and hints, not by just handing over answers.
+
+When a student asks a tutorial question:
+1. IDENTIFY which module/week the topic belongs to (Module 1: Statically Determinate Structures, Module 2: Influence Lines & Moving Loads, Module 3: Statically Indeterminate Structures / Stiffness Method)
+2. CITE the relevant theory section (e.g. "This is covered in Module 1 — the key principle here is...")
+3. STATE any applicable rules, sign conventions, or formulas explicitly before starting
+4. GIVE a worked hint or first step — set up the problem, identify unknowns, but don't complete it
+5. Only give a full step-by-step solution if the student explicitly asks for it
+
+Key content areas to reference:
+- Module 1: Reactions, internal forces (N, V, M), SFDs and BMDs, statically determinate beams/frames/trusses, principle of superposition
+- Module 2: Influence lines (Müller-Breslau, direct method), moving loads, max/min effects, distributed load envelopes
+- Module 3: Stiffness method (direct and matrix), member stiffness matrices, global assembly, boundary conditions, slope-deflection equations, moment distribution
+
+Sign conventions to surface proactively:
+- Beam convention: positive sagging moment, positive shear per standard NZ/Austroads convention
+- Stiffness method: clockwise moments positive at nodes (or state the convention used in the notes explicitly)
+- Macaulay brackets: <x-a>^n = 0 if x < a, = (x-a)^n if x ≥ a. Always integrate term by term. Don't expand before integrating.
+- Truss: tension positive, compression negative
+
+When the student uploads PDFs, refer to them as "your notes" and cite specific sections when possible (e.g. "In your Module 2 notes, the influence line for a simply supported beam is derived on the slide covering the Müller-Breslau principle").
+
+Flag proactively when:
+- A question matches a common exam question style
+- There's a sign convention trap
+- A Macaulay bracket is being misapplied
+- The student is about to make a common error (e.g. forgetting to apply boundary conditions in the stiffness method)
+
+Keep responses concise and structured. Use clear headings for: Module/Topic, Key Rules, Hint/First Step. Use LaTeX-style notation inline (e.g. M(x) = R_A·x - w·x²/2) when writing equations.`;
+
+let apiKey = localStorage.getItem('enci335_key') || '';
+let history = [];
+let files = {};
+
+if (apiKey) {
+  document.getElementById('api-banner').style.display = 'none';
+  document.getElementById('api-key-input').value = apiKey;
+}
+
+function saveKey() {
+  const k = document.getElementById('api-key-input').value.trim();
+  if (!k.startsWith('sk-')) { alert('Enter a valid Anthropic API key (starts with sk-ant-)'); return; }
+  apiKey = k;
+  localStorage.setItem('enci335_key', k);
+  document.getElementById('api-banner').style.display = 'none';
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function quickSend(text) {
+  document.getElementById('msg-input').value = text;
+  sendMessage();
+}
+
+document.getElementById('upload-input').addEventListener('change', async (e) => {
+  for (const file of e.target.files) {
+    const b64 = await toBase64(file);
+    files[file.name] = b64;
+  }
+  renderChips();
+  e.target.value = '';
+});
+
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+function renderChips() {
+  const c = document.getElementById('chips');
+  c.innerHTML = '';
+  const names = Object.keys(files);
+  names.forEach(name => {
+    const chip = document.createElement('div');
+    chip.className = 'file-chip';
+    chip.innerHTML = `📄 ${name} <button onclick="removeFile('${name}')" title="Remove">×</button>`;
+    c.appendChild(chip);
+  });
+  document.getElementById('file-count').textContent = names.length ? `${names.length} file${names.length>1?'s':''} loaded` : 'No notes loaded';
+}
+
+function removeFile(name) {
+  delete files[name];
+  renderChips();
+}
+
+function addMsg(role, text) {
+  const chat = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = role === 'user' ? 'Z' : 'AI';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return bubble;
+}
+
+async function sendMessage() {
+  if (!apiKey) { alert('Enter your API key first'); return; }
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('send-btn').disabled = true;
+  document.getElementById('quick-btns').style.display = 'none';
+
+  addMsg('user', text);
+  history.push({ role: 'user', content: text });
+
+  const thinkBubble = addMsg('assistant', '...');
+  thinkBubble.classList.add('thinking');
+
+  try {
+    const fileNames = Object.keys(files);
+    let userContent;
+
+    if (fileNames.length > 0) {
+      userContent = [
+        ...fileNames.map(name => ({
+          type: 'document',
+          source: { type: 'base64', media_type: 'application/pdf', data: files[name] },
+          title: name
+        })),
+        { type: 'text', text }
+      ];
+    } else {
+      userContent = text;
+    }
+
+    const messages = [
+      ...history.slice(0, -1),
+      { role: 'user', content: userContent }
+    ];
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: SYSTEM_PROMPT,
+        messages
+      })
+    });
+
+    const data = await resp.json();
+
+    if (data.error) throw new Error(data.error.message);
+
+    const reply = data.content.map(b => b.text || '').join('');
+    thinkBubble.classList.remove('thinking');
+    thinkBubble.textContent = reply;
+    history.push({ role: 'assistant', content: reply });
+
+  } catch (err) {
+    thinkBubble.classList.remove('thinking');
+    thinkBubble.textContent = `Error: ${err.message}`;
+    thinkBubble.style.color = '#f87171';
+    history.pop();
+  }
+
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('chat-area').scrollTop = document.getElementById('chat-area').scrollHeight;
+}
+</script>
+</body>
+</html>
