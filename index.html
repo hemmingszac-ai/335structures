@@ -314,7 +314,8 @@ Common errors to flag: unit consistency (SI vs imperial), drawdown sign conventi
 
 // ============ STATE ============
 const KEY = 'study_tutor_';
-let model = localStorage.getItem(KEY+'model') || 'anthropic/claude-sonnet-4-5';
+let apiKey = localStorage.getItem(KEY+'apikey') || '';
+let model = localStorage.getItem(KEY+'model') || 'google/gemini-2.5-flash';
 
 const PDF_MANIFEST = {
   // === ACTIVE THIS WEEK (Energy exam Mon Jun 15, Structures exam Tue Jun 17) ===
@@ -558,8 +559,15 @@ function blobToBase64(blob) {
 
 // ============ SETTINGS ============
 function showSettings() {
-  const m = prompt('Model (current: '+model+')\nCommon options:\nanthropic/claude-sonnet-4-5\nanthropic/claude-opus-4\nanthropic/claude-3.5-sonnet', model);
-  if (m && m.trim()) { model = m.trim(); localStorage.setItem(KEY+'model', model); alert('Model updated to: '+model); }
+  const k = prompt('OpenRouter API key (sk-or-...):\nLeave blank to keep current. Type "clear" to remove.', apiKey ? '••••••••' : '');
+  if (k !== null && k.trim() !== '' && k !== '••••••••') {
+    const trimmed = k.trim();
+    if (trimmed === 'clear') { localStorage.removeItem(KEY+'apikey'); apiKey = ''; alert('Key cleared'); }
+    else if (trimmed.startsWith('sk-or-')) { apiKey = trimmed; localStorage.setItem(KEY+'apikey', apiKey); }
+    else { alert('Invalid key — should start with sk-or-'); return; }
+  }
+  const m = prompt('Model (current: '+model+')\nOptions:\ngoogle/gemini-2.5-flash (cheap, big context)\nanthropic/claude-sonnet-4-5 (best reasoning)\nanthropic/claude-opus-4 (best, expensive)', model);
+  if (m && m.trim()) { model = m.trim(); localStorage.setItem(KEY+'model', model); }
 }
 
 // ============ INPUT ============
@@ -578,6 +586,7 @@ function clearHistory(key) {
 
 // ============ CHAT ============
 async function sendMessage(key) {
+  if (!apiKey) { alert('Click Settings (top right) to add your OpenRouter API key first.'); return; }
   const input = document.getElementById(key+'-input');
   const text = input.value.trim();
   if (!text) return;
@@ -607,9 +616,14 @@ async function sendMessage(key) {
       { role: 'system', content: BASE_PROMPT + COURSES[key].systemPrompt },
       ...state[key].history
     ];
-    const resp = await fetch('/api/chat', {
+    const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': window.location.origin || 'https://study-tutor.local',
+        'X-Title': 'UC Study Tutor'
+      },
       body: JSON.stringify({ model, max_tokens: 2000, messages })
     });
     const data = await resp.json();
@@ -651,6 +665,11 @@ function renderCountdown() {
       card.innerHTML = `<div class="cd-edit">edit</div><div class="cd-course">${c.code}</div><div class="cd-time" style="color:#666;font-size:17px">No date set</div><div class="cd-units">click to set</div>`;
     } else {
       const exam = new Date(savedDate);
+      if (isNaN(exam.getTime())) {
+        card.innerHTML = `<div class="cd-edit">edit</div><div class="cd-course">${c.code}</div><div class="cd-time" style="color:#666;font-size:16px">Invalid date</div><div class="cd-units">click to fix</div>`;
+        grid.appendChild(card);
+        continue;
+      }
       const diff = exam - now;
       if (diff < 0) {
         card.className += ' passed';
