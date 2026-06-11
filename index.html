@@ -317,56 +317,8 @@ const KEY = 'study_tutor_';
 let model = localStorage.getItem(KEY+'model') || 'anthropic/claude-sonnet-4-5';
 
 const PDF_MANIFEST = {
-  // === ACTIVE THIS WEEK (Energy exam Mon Jun 15, Structures exam Tue Jun 17) ===
-  struct: [
-    // Part 2 module slides (what the exam covers)
-    'mod1.pdf',
-    'mod 2 frames.pdf',
-    'mod3 energy.pdf',
-    // Tutorial solutions — T3-T6 are Part 2; uncomment T1/T2 if needed
-    // 'T1_Soln.pdf',
-    // 'T2_Soln.pdf',
-    'T3 Soln.pdf',
-    'T4 Soln.pdf',
-    'T5 Soln.pdf',
-    'T6_Soln.pdf',
-    // Exam materials
-    'ENCI335-25S1 Final Exam.pdf',
-    'E335Exam26Format.pdf',
-  ],
-  energy: [
-    // Formula sheet + past practice test
-    'Formula Sheet 3.pdf',
-    'practiceTest3.pdf',
-    'practiceTest3 solutions.pdf',
-    // SOLAR (PV)
-    'SOLAR/Lecture Slides - Solar Photovoltaics.pdf',
-    'SOLAR/Summary - Solar PV.pdf',
-    'SOLAR/Solar Practice Questions.pdf',
-    'SOLAR/Solar Practice Questions SOLUTIONS.pdf',
-    // BATTERIES / Storage
-    'BATTERIES/Lecture Slides - Storage.pdf',
-    'BATTERIES/Summary - Battery.pdf',
-    'BATTERIES/Batteries Practice Questions.pdf',
-    'BATTERIES/Batteries Practice Questions SOLUTIONS.pdf',
-    // FUELS
-    'FUELS/Lecture Slides - Fuels.pdf',
-    'FUELS/Summary - Fuels.pdf',
-    'FUELS/Practice_questions_fuels.pdf',
-    'FUELS/Practice_solutions_fuels.pdf',
-    'FUELS/Tutorial_fuel_questions.pdf',
-    // INDUSTRY
-    'INDUSTRY/Lecture Slides - Industry.pdf',
-    // TRANSPORT
-    'TRANSPORT/Lecture Slides - Transport - Part I.pdf',
-    'TRANSPORT/Lecture Slides - Transport - Part II.pdf',
-    'TRANSPORT/Summary - Transport.pdf',
-    'TRANSPORT/ENCN423_Transport_Practice_problems.pdf',
-    'TRANSPORT/ENCN423_Transport_Practice_problems_Solutions.pdf',
-  ],
-  // === DORMANT — re-enable after Jun 17 exams ===
-  // Files are committed to /notes/pave and /notes/ground, just not loaded into context.
-  // To re-enable: paste the full lists back from the earlier manifest (still in git history).
+  struct: [],
+  energy: [],
   pave: [],
   ground: []
 };
