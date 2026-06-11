@@ -3,167 +3,448 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ENCI335 Study Assistant</title>
+<title>UC Study Tutor</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, sans-serif; background: #0f1117; color: #e8e8e8; height: 100vh; display: flex; flex-direction: column; }
-  #header { padding: 12px 20px; border-bottom: 1px solid #2a2a3a; display: flex; align-items: center; gap: 12px; background: #161820; }
-  #header h1 { font-size: 15px; font-weight: 600; color: #fff; }
-  #header span { font-size: 12px; color: #888; }
-  #files-bar { padding: 8px 20px; border-bottom: 1px solid #2a2a3a; background: #13141c; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 44px; }
-  #files-bar label { font-size: 12px; color: #888; white-space: nowrap; }
-  .file-chip { background: #1e2030; border: 1px solid #3a3a5c; border-radius: 6px; padding: 3px 10px; font-size: 12px; color: #a0a8d0; display: flex; align-items: center; gap: 6px; }
-  .file-chip button { background: none; border: none; color: #666; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
-  .file-chip button:hover { color: #f87171; }
-  #upload-btn { background: #252740; border: 1px dashed #4a4a7a; border-radius: 6px; padding: 4px 12px; font-size: 12px; color: #7a7aaa; cursor: pointer; white-space: nowrap; }
-  #upload-btn:hover { border-color: #7a7aff; color: #9a9aff; }
-  #upload-input { display: none; }
-  #chat-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-  .msg { display: flex; gap: 10px; max-width: 820px; }
-  .msg.user { flex-direction: row-reverse; align-self: flex-end; }
-  .msg.assistant { align-self: flex-start; }
-  .bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.6; max-width: 680px; white-space: pre-wrap; }
-  .user .bubble { background: #2d2f7a; color: #d8d8ff; border-bottom-right-radius: 4px; }
-  .assistant .bubble { background: #1a1d2e; border: 1px solid #2a2d45; color: #d0d4e8; border-bottom-left-radius: 4px; }
-  .avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
-  .user .avatar { background: #4a4db5; color: #c8c8ff; }
-  .assistant .avatar { background: #1e3a5f; color: #60a0d0; }
-  .thinking { color: #666; font-style: italic; }
-  #input-area { padding: 16px 20px; border-top: 1px solid #2a2a3a; background: #13141c; display: flex; gap: 10px; }
-  #input-area textarea { flex: 1; background: #1e2030; border: 1px solid #3a3a5c; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: #e0e0f0; resize: none; outline: none; font-family: inherit; line-height: 1.5; max-height: 120px; }
-  #input-area textarea:focus { border-color: #5a5aaa; }
-  #input-area textarea::placeholder { color: #555; }
-  #send-btn { background: #3a3db5; border: none; border-radius: 10px; width: 44px; height: 44px; cursor: pointer; color: #c0c0ff; font-size: 18px; display: flex; align-items: center; justify-content: center; align-self: flex-end; flex-shrink: 0; }
-  #send-btn:hover { background: #4a4dc5; }
-  #send-btn:disabled { background: #252530; color: #444; cursor: not-allowed; }
-  #api-banner { background: #2a1a0a; border: 1px solid #6a3a0a; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #d0a060; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-  #api-banner input { background: #1a1210; border: 1px solid #5a3010; border-radius: 6px; padding: 4px 10px; color: #e0b070; font-size: 13px; flex: 1; outline: none; font-family: monospace; }
-  #api-banner button { background: #5a3010; border: none; border-radius: 6px; padding: 4px 12px; color: #e0b070; font-size: 13px; cursor: pointer; white-space: nowrap; }
-  #api-banner button:hover { background: #7a4020; }
-  .quick-btns { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 12px; }
-  .quick-btn { background: #1e2030; border: 1px solid #3a3a5c; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #8888cc; cursor: pointer; white-space: nowrap; }
-  .quick-btn:hover { border-color: #6a6aaa; color: #aaaae0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #0e1015; color: #e8e8ec; height: 100vh; display: flex; flex-direction: column; overflow: hidden; font-size: 14px; line-height: 1.55; }
+nav { display: flex; align-items: center; gap: 4px; padding: 12px 20px; border-bottom: 1px solid #232634; background: #14161e; flex-shrink: 0; }
+nav .logo { font-size: 14px; font-weight: 600; color: #fff; margin-right: 16px; letter-spacing: 0.3px; }
+nav button { background: transparent; border: none; color: #999; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: inherit; font-weight: 500; }
+nav button:hover { background: #1d2030; color: #ccc; }
+nav button.active { background: #2a2d3e; color: #fff; }
+nav .spacer { flex: 1; }
+.settings-btn { font-size: 12px !important; padding: 6px 12px !important; border: 1px solid #2a2d3e !important; }
+.tab-content { flex: 1; overflow: hidden; display: none; flex-direction: column; }
+.tab-content.active { display: flex; }
+
+/* Files bar + chat */
+.files-bar { padding: 10px 20px; border-bottom: 1px solid #232634; background: #11131b; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 46px; }
+.files-bar label { font-size: 12px; color: #777; }
+.file-chip { background: #1c1f2a; border: 1px solid #2e3245; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #aab; display: flex; align-items: center; gap: 6px; }
+.file-chip button { background: none; border: none; color: #666; cursor: pointer; font-size: 14px; padding: 0; line-height: 1; }
+.file-chip button:hover { color: #f87171; }
+.upload-btn { background: #20243a; border: 1px dashed #3e425a; border-radius: 6px; padding: 5px 12px; font-size: 12px; color: #889; cursor: pointer; }
+.upload-btn:hover { border-color: #6a6dff; color: #aab0ff; }
+.chat-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.msg { display: flex; gap: 10px; max-width: 100%; }
+.msg.user { flex-direction: row-reverse; align-self: flex-end; max-width: 80%; }
+.msg.assistant { align-self: flex-start; max-width: 92%; }
+.bubble { padding: 11px 15px; border-radius: 12px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+.user .bubble { background: #2a2d7a; color: #d8d8ff; border-bottom-right-radius: 4px; }
+.assistant .bubble { background: #181b27; border: 1px solid #262a3a; color: #d4d6e0; border-bottom-left-radius: 4px; }
+.avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px; letter-spacing: 0.3px; }
+.user .avatar { background: #3a3db5; color: #c8c8ff; }
+.thinking { color: #666; font-style: italic; }
+.quick-btns { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 12px; }
+.quick-btn { background: #1c1f2a; border: 1px solid #2e3245; border-radius: 20px; padding: 6px 13px; font-size: 12px; color: #aab; cursor: pointer; font-family: inherit; }
+.quick-btn:hover { border-color: #6a6dff; color: #c0c4ff; }
+.quick-btn.special { background: #1a2e22; border-color: #2e5d40; color: #6ed98a; }
+.input-area { padding: 14px 20px; border-top: 1px solid #232634; background: #11131b; display: flex; gap: 10px; }
+.input-area textarea { flex: 1; background: #1c1f2a; border: 1px solid #2e3245; border-radius: 10px; padding: 11px 14px; font-size: 14px; color: #e0e0e8; resize: none; outline: none; font-family: inherit; line-height: 1.5; max-height: 120px; }
+.input-area textarea:focus { border-color: #5a5dff; }
+.send-btn { background: #3a3db5; border: none; border-radius: 10px; width: 46px; height: 46px; cursor: pointer; color: #c0c0ff; font-size: 18px; align-self: flex-end; flex-shrink: 0; }
+.send-btn:hover { background: #4a4dc5; }
+.send-btn:disabled { background: #252530; color: #444; cursor: not-allowed; }
+
+/* Course header */
+.course-header { padding: 14px 20px; border-bottom: 1px solid #232634; display: flex; align-items: center; gap: 14px; background: #14161e; }
+.course-badge { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.3px; flex-shrink: 0; }
+.course-header h1 { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+.course-header .meta { font-size: 12px; color: #888; }
+.course-header .clear { margin-left: auto; background: transparent; border: 1px solid #2e3245; color: #888; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; }
+.course-header .clear:hover { color: #f87171; border-color: #f87171; }
+
+/* Dashboard */
+#tab-dash { padding: 28px 24px; overflow-y: auto; }
+.dash-wrap { max-width: 1400px; margin: 0 auto; }
+.dash-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; color: #777; margin-bottom: 14px; }
+.countdown-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 36px; }
+.countdown-card { background: #181b27; border: 1px solid #262a3a; border-left: 3px solid; border-radius: 10px; padding: 16px 18px; position: relative; cursor: pointer; transition: all 0.15s; }
+.countdown-card:hover { border-color: #4a4d65; }
+.countdown-card.urgent { border-left-color: #f59e0b !important; }
+.countdown-card.critical { border-left-color: #ef4444 !important; background: #2a1818; }
+.countdown-card .cd-course { font-size: 11px; color: #888; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; }
+.countdown-card .cd-time { font-size: 22px; font-weight: 600; color: #fff; line-height: 1.2; }
+.countdown-card.urgent .cd-time { color: #fbbf6b; }
+.countdown-card.critical .cd-time { color: #f87171; }
+.countdown-card .cd-units { font-size: 11px; color: #888; margin-top: 4px; }
+.countdown-card .cd-edit { position: absolute; top: 10px; right: 12px; color: #555; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.countdown-card.passed { opacity: 0.4; }
+
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+.course-card { background: #181b27; border: 1px solid #262a3a; border-radius: 12px; padding: 20px; border-left: 3px solid; }
+.cc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.cc-badge { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.cc-name { font-size: 15px; font-weight: 600; }
+.cc-meta { font-size: 11px; color: #888; margin-top: 1px; }
+
+/* Pass callout — simple green */
+.pass-callout { background: #15291a; border: 1px solid #2a5040; border-radius: 8px; padding: 11px 14px; margin-bottom: 14px; }
+.pass-callout .pc-value { font-size: 15px; font-weight: 600; color: #6ed98a; line-height: 1.4; }
+
+/* Family message */
+.family-message { background: #14261a; border: 1px solid #234d33; border-radius: 10px; padding: 16px 22px; margin-bottom: 32px; display: flex; gap: 32px; flex-wrap: wrap; }
+.fm-msg { font-size: 14px; color: #a8dcb8; font-style: italic; line-height: 1.5; }
+.fm-msg .fm-from { color: #6da585; font-style: normal; font-weight: 500; margin-left: 8px; }
+
+.grade-table { border-top: 1px solid #232634; padding-top: 4px; }
+.grade-row { display: grid; grid-template-columns: 1fr 70px 60px; gap: 10px; align-items: center; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #20232f; }
+.grade-row:last-child { border-bottom: none; }
+.grade-row input { background: #1c1f2a; border: 1px solid #2e3245; border-radius: 5px; padding: 5px 7px; font-size: 12px; color: #e0e0e8; text-align: right; outline: none; font-family: inherit; width: 100%; }
+.grade-row input:focus { border-color: #5a5dff; }
+.grade-row input.empty { background: #221915; border-color: #4a3520; }
+.grade-row .gr-name { color: #c4c6d0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.grade-row .gr-weight { color: #666; font-size: 11px; text-align: right; }
+
+.note-line { margin-top: 14px; padding: 8px 12px; background: #2a1d0d; border: 1px solid #553817; border-radius: 6px; font-size: 11px; color: #d0a060; line-height: 1.45; }
+
+.current-stats { margin-top: 14px; padding-top: 14px; border-top: 1px solid #232634; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.stat-line { font-size: 11px; }
+.stat-line .sl-label { color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.stat-line .sl-value { font-size: 17px; font-weight: 600; color: #fff; }
+
+.higher-targets { margin-top: 14px; padding-top: 12px; border-top: 1px solid #232634; }
+.higher-targets .ht-label { font-size: 11px; color: #777; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.target-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+.target-row .tr-name { color: #999; }
+.target-row .tr-val { font-weight: 500; }
+.target-row .tr-val.easy { color: #6ed98a; }
+.target-row .tr-val.medium { color: #4ea872; }
+.target-row .tr-val.hard { color: #3d7a4d; }
+.target-row .tr-val.impossible { color: #3d7a4d; }
+
+.dash-header-top { margin-bottom: 28px; }
+.dash-header-top h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.dash-header-top p { color: #888; font-size: 13px; }
 </style>
 </head>
 <body>
 
-<div id="header">
-  <div style="width:32px;height:32px;background:#1e3060;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">🏗️</div>
-  <div>
-    <h1>ENCI335 Structures Study Assistant</h1>
-    <span id="file-count">No notes loaded</span>
+<nav>
+  <div class="logo">Study Tutor</div>
+  <button data-tab="dash" class="active">Dashboard</button>
+  <button data-tab="struct">Structures</button>
+  <button data-tab="energy">Energy</button>
+  <button data-tab="pave">Pavement</button>
+  <button data-tab="ground">Groundwater</button>
+  <div class="spacer"></div>
+  <button class="settings-btn" onclick="showSettings()">Settings</button>
+</nav>
+
+<div id="tab-dash" class="tab-content active">
+  <div class="dash-wrap">
+    <div class="dash-header-top">
+      <h2>Dashboard</h2>
+      <p>Pre-filled with your current grades. Edit any cell to update — saves automatically.</p>
+    </div>
+    <div class="family-message">
+      <div class="fm-msg">"Get it done mate"<span class="fm-from">— Dad</span></div>
+      <div class="fm-msg">"We are so proud of you"<span class="fm-from">— Hemmings Family</span></div>
+    </div>
+    <div class="dash-section-title">Exam countdown</div>
+    <div class="countdown-grid" id="countdown-grid"></div>
+    <div class="dash-section-title">Course standing</div>
+    <div class="dash-grid" id="dash-grid"></div>
   </div>
 </div>
 
-<div id="files-bar">
-  <label>Notes:</label>
-  <div id="chips"></div>
-  <button id="upload-btn" onclick="document.getElementById('upload-input').click()">+ Add PDFs</button>
-  <input type="file" id="upload-input" accept=".pdf" multiple>
-</div>
-
-<div id="chat-area">
-  <div id="api-banner">
-    <span>🔑</span>
-    <span>Anthropic API key:</span>
-    <input type="password" id="api-key-input" placeholder="sk-ant-..." />
-    <button onclick="saveKey()">Save</button>
-  </div>
-  <div class="msg assistant">
-    <div class="avatar">AI</div>
-    <div class="bubble">Hi! I'm your ENCI335 structures tutor.
-
-Upload your lecture note PDFs and tutorial sheets using the bar above, then ask me anything — a tutorial question, a concept you're stuck on, or ask me to explain a method step by step.
-
-I'll identify the relevant module, cite the theory, state the applicable rules and sign conventions, and give you a hint rather than just the answer (unless you ask for the full solution).
-
-Try asking something like: <em>"T2 Q3 — I'm not sure how to set up the BMD for this frame"</em> or <em>"Explain the stiffness method sign convention"</em></div>
-  </div>
-</div>
-
-<div class="quick-btns" id="quick-btns">
-  <button class="quick-btn" onclick="quickSend('Explain Macaulay bracket rules and when to use them')">Macaulay brackets</button>
-  <button class="quick-btn" onclick="quickSend('What are the stiffness method sign conventions I need to know?')">Stiffness method sign conventions</button>
-  <button class="quick-btn" onclick="quickSend('What topics are covered in each module?')">Module overview</button>
-  <button class="quick-btn" onclick="quickSend('What types of questions appear in the exam?')">Exam question styles</button>
-</div>
-
-<div id="input-area">
-  <textarea id="msg-input" placeholder="Ask a tutorial question, paste a problem, or ask for theory..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-  <button id="send-btn" onclick="sendMessage()">↑</button>
-</div>
+<div id="tab-struct" class="tab-content"></div>
+<div id="tab-energy" class="tab-content"></div>
+<div id="tab-pave" class="tab-content"></div>
+<div id="tab-ground" class="tab-content"></div>
 
 <script>
-const SYSTEM_PROMPT = `You are a structural engineering tutor for ENCI335 (Structural Analysis) at the University of Canterbury. Your role is to help students work through tutorial problems by guiding them with theory and hints, not by just handing over answers.
+// ============ CONFIG ============
+const COURSES = {
+  struct: {
+    name: 'Structures',
+    code: 'ENCI335',
+    badge: 'S',
+    color: '#5a8dd9',
+    bg: '#1d2c44',
+    meta: 'Final exam Jun 17 (Part 2)',
+    examDate: '2026-06-17T09:00:00',
+    quickActions: [
+      { label: 'Module 1: Force method beams', prompt: 'Walk me through the force/flexibility method for solving statically indeterminate beams. Cover the setup, primary structure, compatibility equations.' },
+      { label: 'Module 2: Frame BMDs', prompt: 'How do I draw AFD, SFD and BMD for a determinate frame, and what changes for an indeterminate frame?' },
+      { label: 'Module 3: Virtual work', prompt: 'Explain the principle of virtual work and the unit load method for finding deflections in beams, frames and trusses' },
+      { label: 'Moment Area Theorems', prompt: 'Walk me through the Moment Area Theorems with an example application' },
+      { label: "Castigliano's theorems", prompt: "Explain Castigliano's theorems and their application to displacement calculations" },
+      { label: 'Sketching deflected shapes', prompt: 'How do I sketch deflected shapes and BMDs without doing calculations (engineering without numbers)?' },
+      { label: 'Common exam traps', prompt: 'What are the most common mistakes in Part 2 exam questions?' }
+    ],
+    assessments: [
+      { name: 'Mid-sem test (Part 1 — Dynamics)', weight: 42.5, key: 'mid' },
+      { name: 'Final exam (Part 2 — upcoming)', weight: 42.5, key: 'final', isExam: true },
+      { name: 'Assignment 1', weight: 5, key: 'a1' },
+      { name: 'Assignment 2', weight: 5, key: 'a2' },
+      { name: 'Tutorial attendance', weight: 5, key: 'att' }
+    ],
+    passNote: 'Need at least 40% in both mid-sem test and final exam to pass.',
+    defaultGrades: { mid: '46.7', a1: '95' },
+    systemPrompt: `You are a tutor for ENCI335 (Structural Analysis and Systems 1) at University of Canterbury. The upcoming final exam covers PART 2 ONLY (Analysis of Indeterminate Structures, taught by Assoc. Prof. Chin-Long Lee). Part 1 (Dynamics, by Prof. Bradley) was in the mid-sem test and is NOT in the final exam.
 
-When a student asks a tutorial question:
-1. IDENTIFY which module/week the topic belongs to (Module 1: Statically Determinate Structures, Module 2: Influence Lines & Moving Loads, Module 3: Statically Indeterminate Structures / Stiffness Method)
-2. CITE the relevant theory section (e.g. "This is covered in Module 1 — the key principle here is...")
-3. STATE any applicable rules, sign conventions, or formulas explicitly before starting
-4. GIVE a worked hint or first step — set up the problem, identify unknowns, but don't complete it
-5. Only give a full step-by-step solution if the student explicitly asks for it
+Part 2 modules:
+- MODULE 1: Force/Flexibility method for indeterminate beams — support types, stability/indeterminacy, small displacement theory, superposition, sketching deflected shapes and BMDs, general force method (primary structure, redundants, compatibility), double integration, Moment Area Theorems.
+- MODULE 2: Determinate and Indeterminate Frames — AFD/SFD/BMD of determinate frames, degree of indeterminacy, sketching frame deflected shapes, frame rotations via Moment Area, force method for indeterminate frames.
+- MODULE 3: Energy methods and virtual work — external work and strain energy, strain energy for axial/shear/bending/torsion, work-energy principle, Betti's law, Maxwell's reciprocal theorem, Castigliano's theorems, virtual displacement/force principles, unit load method for trusses/beams/frames.
+- MODULE 4: Structural forms of buildings.
 
-Key content areas to reference:
-- Module 1: Reactions, internal forces (N, V, M), SFDs and BMDs, statically determinate beams/frames/trusses, principle of superposition
-- Module 2: Influence lines (Müller-Breslau, direct method), moving loads, max/min effects, distributed load envelopes
-- Module 3: Stiffness method (direct and matrix), member stiffness matrices, global assembly, boundary conditions, slope-deflection equations, moment distribution
+For tutorial questions: identify the module, walk through using the lecturer's approach from the loaded solutions, state the sign convention used in the notes, give hints first, full solution only on request.`
+  },
+  energy: {
+    name: 'Energy Systems',
+    code: 'ENCN423',
+    badge: 'E',
+    color: '#54b577',
+    bg: '#1c3329',
+    meta: 'Test 3 Mon Jun 15 (30%)',
+    examDate: '2026-06-15T09:00:00',
+    quickActions: [
+      { label: 'Generate practice question', prompt: 'Generate a practice test question in the style of past ENCN423 tests, pick a random topic from the loaded notes. Show the question only — wait for my attempt before giving the solution.', special: true },
+      { label: 'Module summary', prompt: 'Give me a summary of the key learning outcomes for each topic covered in ENCN423' },
+      { label: 'Solar resource calcs', prompt: 'Walk me through how to do solar resource analysis and preliminary sizing' },
+      { label: 'Wind energy fundamentals', prompt: 'Explain the key wind energy theory — power curves, Betz limit, capacity factor' },
+      { label: 'Energy storage', prompt: 'Summarise the energy storage technologies covered in the course' }
+    ],
+    assessments: [
+      { name: 'Test 1', weight: 30, key: 't1' },
+      { name: 'Test 2', weight: 30, key: 't2' },
+      { name: 'Test 3 (upcoming)', weight: 30, key: 't3', isExam: true },
+      { name: 'Tutorials', weight: 10, key: 'tut' }
+    ],
+    defaultGrades: { t1: '59', t2: '50', tut: '22.22' },
+    systemPrompt: `You are a tutor for ENCN423 (Sustainable Energy Technologies) at University of Canterbury. Focus: deep theoretical understanding and calculations.
 
-Sign conventions to surface proactively:
-- Beam convention: positive sagging moment, positive shear per standard NZ/Austroads convention
-- Stiffness method: clockwise moments positive at nodes (or state the convention used in the notes explicitly)
-- Macaulay brackets: <x-a>^n = 0 if x < a, = (x-a)^n if x ≥ a. Always integrate term by term. Don't expand before integrating.
-- Truss: tension positive, compression negative
+Topics: Introduction, Wind, Hydropower, Geothermal, Biomass, Solar, Energy Storage, Transport, Heat, Industry/renewable fuels, Fuels.
 
-When the student uploads PDFs, refer to them as "your notes" and cite specific sections when possible (e.g. "In your Module 2 notes, the influence line for a simply supported beam is derived on the slide covering the Müller-Breslau principle").
+Behaviour:
+- For concept questions: explain thoroughly with the physics, draw connections across topics, provide equations with all terms defined.
+- For calculations: work through step by step using the methods in the loaded notes.
+- When asked to GENERATE A PRACTICE QUESTION: create one in the style of past tests using the uploaded materials, mix conceptual and calculation questions, show the question only and wait for the attempt before marking.
+- When marking attempts: be rigorous but kind, identify errors clearly, explain why.
+- For exam strategy: reference patterns from past tests/exams in the loaded materials.`
+  },
+  pave: {
+    name: 'Pavement Engineering',
+    code: 'ENCN415',
+    badge: 'P',
+    color: '#d4823e',
+    bg: '#3a2618',
+    meta: 'Final exam (40%) — covers both terms',
+    examDate: '',
+    quickActions: [
+      { label: 'Term 1 to Term 2 connections', prompt: 'Map out how Term 1 topics (Superpave, mix design, materials) connect to Term 2 topics (stresses/strains, traffic, mechanistic design). Show me the dependency chain.' },
+      { label: 'Superpave mix design', prompt: 'Explain the Superpave mix design process from start to finish' },
+      { label: 'Westergaard method', prompt: 'Walk me through the Westergaard method for rigid pavement analysis with formulas' },
+      { label: 'Mechanistic-empirical design', prompt: 'Explain the mechanistic-empirical design process for flexible pavements' },
+      { label: 'Traffic loading / ESAs', prompt: 'How do you calculate design traffic and equivalent standard axles?' },
+      { label: 'Backcalculation', prompt: 'Walk me through deflection analysis and backcalculation using FWD data' }
+    ],
+    assessments: [
+      { name: 'Mid-Semester Test', weight: 30, key: 'mid' },
+      { name: 'Final Exam (upcoming)', weight: 40, key: 'final', isExam: true },
+      { name: 'Quiz 1', weight: 5.5, key: 'q1' },
+      { name: 'Quiz 2', weight: 5.5, key: 'q2' },
+      { name: 'Quiz 3', weight: 5.5, key: 'q3' },
+      { name: 'Quiz 4', weight: 5.5, key: 'q4' },
+      { name: 'Lab Report', weight: 8, key: 'lab' }
+    ],
+    defaultGrades: { mid: '77.33', q1: '44.63', q2: '54.17', q3: '60', q4: '96.43', lab: '50' },
+    systemPrompt: `You are a tutor for ENCN415 (Pavement Engineering) at University of Canterbury. The final exam covers BOTH terms — Term 2 builds on Term 1, so surface those connections proactively.
 
-Flag proactively when:
-- A question matches a common exam question style
-- There's a sign convention trap
-- A Macaulay bracket is being misapplied
-- The student is about to make a common error (e.g. forgetting to apply boundary conditions in the stiffness method)
+Term 1: pavement types/distresses, Superpave characterisation (binder + aggregates), volumetric properties, Superpave mix design, APRG18 mix design, recycling (RAP, HIP, RIP).
+Term 2: material characterisation, multilayer flexible pavement analysis (stresses/strains/deflections), rigid pavements (Westergaard), traffic loading and ESAs, mechanistic-empirical design, deflection analysis and backcalculation (FWD).
 
-Keep responses concise and structured. Use clear headings for: Module/Topic, Key Rules, Hint/First Step. Use LaTeX-style notation inline (e.g. M(x) = R_A·x - w·x²/2) when writing equations.`;
+For every question:
+- Identify the term and topic.
+- Flag prerequisite Term 1 concepts when answering Term 2 questions (e.g. "this stress calc needs the resilient modulus from material characterisation, which depends on mix volumetrics from Term 1").
+- State relevant formulas from the loaded notes (Westergaard, Boussinesq, Odemark, fatigue/rutting damage equations, ESA calcs).
+- Hints first, full solutions only on request.`
+  },
+  ground: {
+    name: 'Water Engineering',
+    code: 'ENCN442',
+    badge: 'W',
+    color: '#4cb2d4',
+    bg: '#15303a',
+    meta: 'Final exam (60%) — July resit week',
+    examDate: '',
+    quickActions: [
+      { label: 'Course section overview', prompt: 'Map out the four sections of ENCN442, who teaches each, and the key topics covered' },
+      { label: 'Groundwater fundamentals', prompt: 'Cover the key groundwater theory: recharge, discharge, drawdown, well hydraulics, safe yield' },
+      { label: 'Surface water modelling', prompt: 'Explain rainfall-runoff and hydrologic modelling approaches covered in this course' },
+      { label: 'Coastal processes', prompt: 'Explain wave dynamics, tides, sediment transport and sea level rise impacts' },
+      { label: 'Infrastructure design', prompt: 'Cover surface water infrastructure: culverts, bridges, channels, drop structures' }
+    ],
+    assessments: [
+      { name: 'Groundwater (MODFLOW)', weight: 10, key: 'gw' },
+      { name: 'Surface Water Modelling (HEC-HMS)', weight: 10, key: 'swm' },
+      { name: 'Coastal Engineering', weight: 10, key: 'ce' },
+      { name: 'Surface Water Infrastructure', weight: 10, key: 'swi' },
+      { name: 'Final Exam (upcoming)', weight: 60, key: 'exam', isExam: true }
+    ],
+    defaultGrades: { gw: '0', swm: '91' },
+    passNote: 'Coastal Engineering grade pending — Research Project 81.3% + Design Project 90% submitted.',
+    systemPrompt: `You are a tutor for ENCN442 (Surface Water, Groundwater and Coastal Engineering) at University of Canterbury. Comprehensive final exam covers all four sections.
 
-let apiKey = localStorage.getItem('enci335_key') || '';
-let history = [];
-let files = {};
+Sections:
+1. GROUNDWATER (Prof Weingarten) — recharge/discharge, well hydraulics, drawdown, safe yield, unsaturated zone, groundwater quality, surface-groundwater interactions, numerical modelling.
+2. SURFACE WATER MODELLING (Dr Pahlow) — rainfall-runoff, soil-plant-atmosphere continuum, catchment characteristics, climate change impacts, modelling.
+3. COASTAL ENGINEERING (Dr McConnochie) — surface waves, wave modelling, tides, sediment transport, erosion, sea level rise.
+4. SURFACE WATER INFRASTRUCTURE (Prof Cochrane) — channels, culverts, bridges, drop structures.
 
-if (apiKey) {
-  document.getElementById('api-banner').style.display = 'none';
-  document.getElementById('api-key-input').value = apiKey;
-}
-
-function saveKey() {
-  const k = document.getElementById('api-key-input').value.trim();
-  if (!k.startsWith('sk-')) { alert('Enter a valid Anthropic API key (starts with sk-ant-)'); return; }
-  apiKey = k;
-  localStorage.setItem('enci335_key', k);
-  document.getElementById('api-banner').style.display = 'none';
-}
-
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-}
-
-function quickSend(text) {
-  document.getElementById('msg-input').value = text;
-  sendMessage();
-}
-
-document.getElementById('upload-input').addEventListener('change', async (e) => {
-  for (const file of e.target.files) {
-    const b64 = await toBase64(file);
-    files[file.name] = b64;
+For each question: identify which section it belongs to (state explicitly), cite specific lecture content from loaded notes, state relevant equations (Theis, Darcy, Manning, wave equations etc.), surface connections between sections where relevant, hints first.`
   }
-  renderChips();
-  e.target.value = '';
+};
+
+// ============ STATE ============
+const KEY = 'study_tutor_';
+let model = localStorage.getItem(KEY+'model') || 'anthropic/claude-sonnet-4-5';
+
+const PDF_MANIFEST = {
+  struct: [],
+  energy: [],
+  pave: [],
+  ground: []
+};
+const loadedCourses = new Set();
+
+const BASE_PROMPT = `CRITICAL RULES — FOLLOW THESE WITHOUT EXCEPTION:
+
+1. SOURCE-GROUNDED ONLY. Your answers must come from the uploaded lecture notes, slides, and tutorial solutions provided in this conversation. Do NOT introduce theory, formulas, methods, or sign conventions that aren't in the materials. If something isn't in the loaded notes, do not invent it from general engineering knowledge.
+
+2. CITE EVERYTHING. When stating a rule, formula, or step, cite the document and location (e.g. "From module2-slides.pdf, slide 14..." or "Per T3-solutions.pdf, step 2..."). Filenames of all loaded documents are visible to you as document titles.
+
+3. USE THE LECTURER'S APPROACH. When walking through a tutorial question, follow the method in the provided solutions document — use the lecturer's notation, sign conventions, and step order.
+
+4. ADMIT GAPS EXPLICITLY. If a question or topic isn't covered in the loaded materials, say so directly. Do not silently fall back to general knowledge.
+
+5. PREFER QUOTES OVER PARAPHRASE. Where useful, quote a short relevant passage from the notes directly (with citation) rather than restating it in your own words.
+
+6. NO INVENTED EXAMPLES. Don't generate practice problems with made-up numbers unless explicitly asked. Reference real tutorial questions from the loaded materials.
+
+The course-specific guidance below operates within these rules — they are not overridden by anything that follows.
+
+---
+
+`;
+
+let state = {};
+for (const k of Object.keys(COURSES)) {
+  const storedGrades = localStorage.getItem(KEY+k+'_grades');
+  state[k] = {
+    history: JSON.parse(localStorage.getItem(KEY+k+'_hist') || '[]'),
+    files: {},
+    grades: storedGrades ? JSON.parse(storedGrades) : (COURSES[k].defaultGrades || {})
+  };
+  if (!storedGrades && COURSES[k].defaultGrades) {
+    localStorage.setItem(KEY+k+'_grades', JSON.stringify(COURSES[k].defaultGrades));
+  }
+}
+
+// ============ NAV ============
+document.querySelectorAll('nav button[data-tab]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('nav button[data-tab]').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    const tab = b.dataset.tab;
+    document.getElementById('tab-'+tab).classList.add('active');
+    if (tab === 'dash') renderDash();
+    else autoLoadPdfs(tab);
+  });
 });
 
+// ============ COURSE RENDER ============
+function renderCourse(key) {
+  const c = COURSES[key];
+  const tab = document.getElementById('tab-'+key);
+  tab.innerHTML = `
+    <div class="course-header">
+      <div class="course-badge" style="background:${c.color}">${c.badge}</div>
+      <div>
+        <h1>${c.code} — ${c.name}</h1>
+        <div class="meta">${c.meta} · <span id="${key}-fc">No notes loaded</span></div>
+      </div>
+      <button class="clear" onclick="clearHistory('${key}')">Clear chat</button>
+    </div>
+    <div class="files-bar">
+      <label>Notes:</label>
+      <div id="${key}-chips" style="display:contents"></div>
+      <button class="upload-btn" onclick="document.getElementById('${key}-upload').click()">Add PDFs</button>
+      <input type="file" id="${key}-upload" accept=".pdf" multiple style="display:none">
+    </div>
+    <div class="chat-area" id="${key}-chat"></div>
+    <div class="quick-btns" id="${key}-quick">
+      ${c.quickActions.map(a => `<button class="quick-btn ${a.special?'special':''}" onclick='quickSend("${key}", ${JSON.stringify(a.prompt)})'>${a.label}</button>`).join('')}
+    </div>
+    <div class="input-area">
+      <textarea id="${key}-input" placeholder="Ask a question about ${c.code}..." rows="1" onkeydown="handleKey(event,'${key}')" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" onclick="sendMessage('${key}')">↑</button>
+    </div>
+  `;
+  document.getElementById(key+'-upload').addEventListener('change', e => handleUpload(e, key));
+  renderChat(key);
+  renderChips(key);
+}
+
+function renderChat(key) {
+  const chat = document.getElementById(key+'-chat');
+  if (!chat) return;
+  chat.innerHTML = '';
+  const c = COURSES[key];
+  if (state[key].history.length === 0) {
+    addMsgEl(key, 'assistant', `Hi! I'm your ${c.code} tutor.\n\nI'll only reference your loaded lecture notes and tutorial solutions — no inventing theory or methods. Upload your PDFs above, then ask anything. Use the quick buttons or type your own question.`);
+  } else {
+    state[key].history.forEach(m => addMsgEl(key, m.role, typeof m.content === 'string' ? m.content : m.content.find(b => b.type==='text')?.text || ''));
+  }
+}
+
+function renderChips(key) {
+  const c = document.getElementById(key+'-chips');
+  if (!c) return;
+  c.innerHTML = '';
+  const names = Object.keys(state[key].files);
+  names.forEach(name => {
+    const chip = document.createElement('div');
+    chip.className = 'file-chip';
+    const safe = name.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+    chip.innerHTML = `<span>${name}</span> <button onclick="removeFile('${key}','${safe}')">×</button>`;
+    c.appendChild(chip);
+  });
+  const fc = document.getElementById(key+'-fc');
+  if (fc) fc.textContent = names.length ? `${names.length} file${names.length>1?'s':''} loaded` : 'No notes loaded';
+}
+
+function addMsgEl(key, role, text) {
+  const c = COURSES[key];
+  const chat = document.getElementById(key+'-chat');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const av = document.createElement('div');
+  av.className = 'avatar';
+  av.style.background = role === 'user' ? '' : c.color;
+  av.textContent = role === 'user' ? 'Z' : c.badge;
+  const bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.textContent = text;
+  div.appendChild(av);
+  div.appendChild(bub);
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return bub;
+}
+
+// ============ UPLOAD ============
+async function handleUpload(e, key) {
+  for (const file of e.target.files) {
+    const b64 = await toBase64(file);
+    state[key].files[file.name] = b64;
+  }
+  renderChips(key);
+  e.target.value = '';
+}
 function toBase64(file) {
   return new Promise((res, rej) => {
     const r = new FileReader();
@@ -172,116 +453,268 @@ function toBase64(file) {
     r.readAsDataURL(file);
   });
 }
+function removeFile(key, name) {
+  delete state[key].files[name];
+  renderChips(key);
+}
 
-function renderChips() {
-  const c = document.getElementById('chips');
-  c.innerHTML = '';
-  const names = Object.keys(files);
-  names.forEach(name => {
-    const chip = document.createElement('div');
-    chip.className = 'file-chip';
-    chip.innerHTML = `📄 ${name} <button onclick="removeFile('${name}')" title="Remove">×</button>`;
-    c.appendChild(chip);
+// ============ AUTO-LOAD PDFs ============
+async function autoLoadPdfs(key) {
+  if (loadedCourses.has(key)) return;
+  loadedCourses.add(key);
+  const files = PDF_MANIFEST[key] || [];
+  if (files.length === 0) return;
+  const fc = document.getElementById(key+'-fc');
+  let loaded = 0;
+  for (const filename of files) {
+    if (state[key].files[filename]) { loaded++; continue; }
+    try {
+      if (fc) fc.textContent = `Loading ${loaded+1}/${files.length}: ${filename}`;
+      const resp = await fetch(`notes/${key}/${encodeURIComponent(filename)}`);
+      if (!resp.ok) { console.warn(`Could not load ${filename}: HTTP ${resp.status}`); continue; }
+      const blob = await resp.blob();
+      const b64 = await blobToBase64(blob);
+      state[key].files[filename] = b64;
+      loaded++;
+      renderChips(key);
+    } catch (err) {
+      console.warn(`Failed to load ${filename}:`, err);
+    }
+  }
+  renderChips(key);
+}
+function blobToBase64(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onloadend = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(blob);
   });
-  document.getElementById('file-count').textContent = names.length ? `${names.length} file${names.length>1?'s':''} loaded` : 'No notes loaded';
 }
 
-function removeFile(name) {
-  delete files[name];
-  renderChips();
+// ============ SETTINGS ============
+function showSettings() {
+  const m = prompt('Model (current: '+model+')\nCommon options:\nanthropic/claude-sonnet-4-5\nanthropic/claude-opus-4\nanthropic/claude-3.5-sonnet', model);
+  if (m && m.trim()) { model = m.trim(); localStorage.setItem(KEY+'model', model); alert('Model updated to: '+model); }
 }
 
-function addMsg(role, text) {
-  const chat = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar';
-  avatar.textContent = role === 'user' ? 'Z' : 'AI';
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble';
-  bubble.textContent = text;
-  div.appendChild(avatar);
-  div.appendChild(bubble);
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-  return bubble;
+// ============ INPUT ============
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+function handleKey(e, key) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(key); } }
+function quickSend(key, text) {
+  document.getElementById(key+'-input').value = text;
+  sendMessage(key);
+}
+function clearHistory(key) {
+  if (!confirm('Clear chat history for this course?')) return;
+  state[key].history = [];
+  localStorage.removeItem(KEY+key+'_hist');
+  renderChat(key);
 }
 
-async function sendMessage() {
-  if (!apiKey) { alert('Enter your API key first'); return; }
-  const input = document.getElementById('msg-input');
+// ============ CHAT ============
+async function sendMessage(key) {
+  const input = document.getElementById(key+'-input');
   const text = input.value.trim();
   if (!text) return;
-
   input.value = '';
   input.style.height = 'auto';
-  document.getElementById('send-btn').disabled = true;
-  document.getElementById('quick-btns').style.display = 'none';
-
-  addMsg('user', text);
-  history.push({ role: 'user', content: text });
-
-  const thinkBubble = addMsg('assistant', '...');
-  thinkBubble.classList.add('thinking');
-
-  try {
-    const fileNames = Object.keys(files);
-    let userContent;
-
-    if (fileNames.length > 0) {
-      userContent = [
-        ...fileNames.map(name => ({
-          type: 'document',
-          source: { type: 'base64', media_type: 'application/pdf', data: files[name] },
-          title: name
-        })),
-        { type: 'text', text }
-      ];
-    } else {
-      userContent = text;
-    }
-
-    const messages = [
-      ...history.slice(0, -1),
-      { role: 'user', content: userContent }
+  addMsgEl(key, 'user', text);
+  const fileNames = Object.keys(state[key].files);
+  let userContent;
+  const hasFiles = fileNames.length > 0;
+  const isFirstWithFiles = hasFiles && !state[key].history.some(m => Array.isArray(m.content));
+  if (isFirstWithFiles) {
+    userContent = [
+      ...fileNames.map(name => ({
+        type: 'file',
+        file: { filename: name, file_data: `data:application/pdf;base64,${state[key].files[name]}` }
+      })),
+      { type: 'text', text }
     ];
-
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+  } else {
+    userContent = text;
+  }
+  state[key].history.push({ role: 'user', content: userContent });
+  const thinkBubble = addMsgEl(key, 'assistant', 'Thinking...');
+  thinkBubble.classList.add('thinking');
+  try {
+    const messages = [
+      { role: 'system', content: BASE_PROMPT + COURSES[key].systemPrompt },
+      ...state[key].history
+    ];
+    const resp = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1500,
-        system: SYSTEM_PROMPT,
-        messages
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, max_tokens: 2000, messages })
     });
-
     const data = await resp.json();
-
-    if (data.error) throw new Error(data.error.message);
-
-    const reply = data.content.map(b => b.text || '').join('');
+    if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error.message || JSON.stringify(data.error));
+    const reply = data.choices[0].message.content;
     thinkBubble.classList.remove('thinking');
     thinkBubble.textContent = reply;
-    history.push({ role: 'assistant', content: reply });
-
+    state[key].history.push({ role: 'assistant', content: reply });
+    saveHistory(key);
   } catch (err) {
     thinkBubble.classList.remove('thinking');
     thinkBubble.textContent = `Error: ${err.message}`;
     thinkBubble.style.color = '#f87171';
-    history.pop();
+    state[key].history.pop();
   }
-
-  document.getElementById('send-btn').disabled = false;
-  document.getElementById('chat-area').scrollTop = document.getElementById('chat-area').scrollHeight;
 }
+function saveHistory(key) {
+  const trimmed = state[key].history.map(m => {
+    if (typeof m.content === 'string') return m;
+    return { role: m.role, content: m.content.filter(b => b.type === 'text') };
+  });
+  try { localStorage.setItem(KEY+key+'_hist', JSON.stringify(trimmed)); } catch(e) { console.warn('History too large to save'); }
+}
+
+// ============ DASHBOARD ============
+function renderCountdown() {
+  const grid = document.getElementById('countdown-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const now = new Date();
+  for (const k of Object.keys(COURSES)) {
+    const c = COURSES[k];
+    const savedDate = localStorage.getItem(KEY+k+'_examDate') || c.examDate;
+    const card = document.createElement('div');
+    card.className = 'countdown-card';
+    card.style.borderLeftColor = c.color;
+    card.onclick = () => editExamDate(k);
+    if (!savedDate) {
+      card.innerHTML = `<div class="cd-edit">edit</div><div class="cd-course">${c.code}</div><div class="cd-time" style="color:#666;font-size:17px">No date set</div><div class="cd-units">click to set</div>`;
+    } else {
+      const exam = new Date(savedDate);
+      const diff = exam - now;
+      if (diff < 0) {
+        card.className += ' passed';
+        card.innerHTML = `<div class="cd-edit">edit</div><div class="cd-course">${c.code}</div><div class="cd-time" style="font-size:17px">Passed</div><div class="cd-units">${exam.toLocaleDateString('en-NZ', {weekday:'short', day:'numeric', month:'short'})}</div>`;
+      } else {
+        const days = Math.floor(diff / 86400000);
+        const hours = Math.floor((diff % 86400000) / 3600000);
+        const mins = Math.floor((diff % 3600000) / 60000);
+        if (days < 1) card.className += ' critical';
+        else if (days < 3) card.className += ' urgent';
+        let timeStr, unitStr;
+        if (days >= 1) {
+          timeStr = `${days}d ${hours}h`;
+          unitStr = exam.toLocaleDateString('en-NZ', {weekday:'long', day:'numeric', month:'short'}) + ' · ' + exam.toLocaleTimeString('en-NZ', {hour:'2-digit', minute:'2-digit'});
+        } else {
+          timeStr = `${hours}h ${mins}m`;
+          unitStr = 'Today · ' + exam.toLocaleTimeString('en-NZ', {hour:'2-digit', minute:'2-digit'});
+        }
+        card.innerHTML = `<div class="cd-edit">edit</div><div class="cd-course">${c.code}</div><div class="cd-time">${timeStr}</div><div class="cd-units">${unitStr}</div>`;
+      }
+    }
+    grid.appendChild(card);
+  }
+}
+
+function editExamDate(k) {
+  const c = COURSES[k];
+  const current = localStorage.getItem(KEY+k+'_examDate') || c.examDate;
+  const dateStr = current ? new Date(current).toISOString().slice(0,16) : '';
+  const input = prompt(`${c.code} exam date & time (YYYY-MM-DDTHH:MM, 24h):\nEnter "clear" to remove.`, dateStr);
+  if (input === null) return;
+  if (input.trim() === 'clear' || input.trim() === '') {
+    localStorage.removeItem(KEY+k+'_examDate');
+  } else {
+    const test = new Date(input);
+    if (isNaN(test.getTime())) { alert('Invalid date format. Use YYYY-MM-DDTHH:MM'); return; }
+    localStorage.setItem(KEY+k+'_examDate', input);
+  }
+  renderCountdown();
+}
+
+function renderDash() {
+  renderCountdown();
+  const grid = document.getElementById('dash-grid');
+  grid.innerHTML = '';
+  for (const k of Object.keys(COURSES)) {
+    const c = COURSES[k];
+    const g = state[k].grades;
+    const completed = c.assessments.filter(a => g[a.key] !== undefined && g[a.key] !== '');
+    const remaining = c.assessments.filter(a => g[a.key] === undefined || g[a.key] === '');
+    const earned = completed.reduce((s,a) => s + (parseFloat(g[a.key])/100) * a.weight, 0);
+    const completedWeight = completed.reduce((s,a) => s + a.weight, 0);
+    const remainWeight = remaining.reduce((s,a) => s + a.weight, 0);
+    const exam = c.assessments.find(a => a.isExam);
+    const examPending = exam && (g[exam.key] === undefined || g[exam.key] === '');
+
+    // Simple green pass callout — encouraging tone
+    let passCallout = '';
+    if (examPending) {
+      const needOnExam = Math.max(0, ((50 - earned) / exam.weight) * 100);
+      const examName = exam.name.replace(' (upcoming)','').replace(' — upcoming','');
+      const displayNeed = needOnExam <= 0
+        ? `You've already secured a pass — exam is a bonus`
+        : `${needOnExam.toFixed(1)}% on ${examName} to pass`;
+      passCallout = `<div class="pass-callout"><div class="pc-value">${displayNeed}</div></div>`;
+    } else if (remainWeight === 0) {
+      passCallout = `<div class="pass-callout"><div class="pc-value">Final grade: ${earned.toFixed(1)}%</div></div>`;
+    }
+
+    const targets = [60, 65, 70];
+    const targetLabels = ['B', 'B+', 'A-'];
+    const card = document.createElement('div');
+    card.className = 'course-card';
+    card.style.borderLeftColor = c.color;
+    card.innerHTML = `
+      <div class="cc-header">
+        <div class="cc-badge" style="background:${c.color}">${c.badge}</div>
+        <div><div class="cc-name">${c.code} — ${c.name}</div><div class="cc-meta">${c.meta}</div></div>
+      </div>
+      ${passCallout}
+      <div class="grade-table">
+        ${c.assessments.map(a => {
+          const v = g[a.key] !== undefined ? g[a.key] : '';
+          return `<div class="grade-row">
+            <span class="gr-name">${a.name}</span>
+            <input type="number" min="0" max="100" step="0.01" placeholder="—" value="${v}" class="${v===''?'empty':''}" oninput="updateGrade('${k}','${a.key}',this.value)" />
+            <span class="gr-weight">${a.weight}%</span>
+          </div>`;
+        }).join('')}
+      </div>
+      ${c.passNote ? `<div class="note-line">Note: ${c.passNote}</div>` : ''}
+      <div class="current-stats">
+        <div class="stat-line"><div class="sl-label">Current</div><div class="sl-value">${completedWeight>0?earned.toFixed(1)+'%':'—'}</div></div>
+        <div class="stat-line"><div class="sl-label">Remaining weight</div><div class="sl-value">${remainWeight}%</div></div>
+      </div>
+      ${remainWeight > 0 && examPending ? `<div class="higher-targets">
+        <div class="ht-label">Need on remaining work for higher grades</div>
+        ${targets.map((t,i) => {
+          const need = ((t - earned) / remainWeight) * 100;
+          let cls = 'easy';
+          if (need > 100) cls = 'impossible';
+          else if (need > 80) cls = 'hard';
+          else if (need > 60) cls = 'medium';
+          return `<div class="target-row">
+            <span class="tr-name">${targetLabels[i]} (${t}%)</span>
+            <span class="tr-val ${cls}">${need <= 0 ? 'Already secured' : need > 100 ? `Not possible` : need.toFixed(1) + '%'}</span>
+          </div>`;
+        }).join('')}
+      </div>` : ''}
+    `;
+    grid.appendChild(card);
+  }
+}
+
+function updateGrade(courseKey, assessKey, val) {
+  if (val === '' || val === null) {
+    delete state[courseKey].grades[assessKey];
+  } else {
+    state[courseKey].grades[assessKey] = val;
+  }
+  localStorage.setItem(KEY+courseKey+'_grades', JSON.stringify(state[courseKey].grades));
+  setTimeout(renderDash, 0);
+}
+
+// ============ INIT ============
+for (const k of Object.keys(COURSES)) renderCourse(k);
+renderDash();
+setInterval(renderCountdown, 60000);
 </script>
 </body>
 </html>
