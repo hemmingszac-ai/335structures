@@ -17,14 +17,26 @@ nav .spacer { flex: 1; }
 .tab-content { flex: 1; overflow: hidden; display: none; flex-direction: column; }
 .tab-content.active { display: flex; }
 
-/* Files bar + chat */
-.files-bar { padding: 10px 20px; border-bottom: 1px solid #232634; background: #11131b; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 46px; }
-.files-bar label { font-size: 12px; color: #777; }
-.file-chip { background: #1c1f2a; border: 1px solid #2e3245; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #aab; display: flex; align-items: center; gap: 6px; }
-.file-chip button { background: none; border: none; color: #666; cursor: pointer; font-size: 14px; padding: 0; line-height: 1; }
-.file-chip button:hover { color: #f87171; }
-.upload-btn { background: #20243a; border: 1px dashed #3e425a; border-radius: 6px; padding: 5px 12px; font-size: 12px; color: #889; cursor: pointer; }
-.upload-btn:hover { border-color: #6a6dff; color: #aab0ff; }
+/* Session selector panel */
+.session-panel { background: #11131b; border-bottom: 1px solid #232634; padding: 12px 20px; display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.session-col { display: flex; flex-direction: column; gap: 6px; min-width: 180px; }
+.session-col-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 2px; }
+.session-btn { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 7px; border: 1px solid #2a2d3e; background: #181b27; cursor: pointer; font-size: 12px; color: #999; font-family: inherit; text-align: left; transition: all 0.12s; }
+.session-btn:hover { border-color: #4a4d65; color: #ccc; }
+.session-btn.selected { border-color: var(--course-color); color: #fff; background: #1e2235; }
+.session-btn .sb-check { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #3a3d52; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+.session-btn.selected .sb-check { background: var(--course-color); border-color: var(--course-color); color: #fff; }
+.session-btn .sb-count { margin-left: auto; font-size: 10px; color: #555; }
+.session-btn.selected .sb-count { color: #888; }
+.session-actions { display: flex; flex-direction: column; gap: 6px; justify-content: flex-end; align-self: flex-end; padding-bottom: 2px; }
+.load-btn { background: var(--course-color); border: none; border-radius: 7px; padding: 7px 16px; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; font-family: inherit; white-space: nowrap; opacity: 0.9; }
+.load-btn:hover { opacity: 1; }
+.load-btn:disabled { background: #252530; color: #444; cursor: not-allowed; opacity: 1; }
+.load-status { font-size: 11px; color: #666; text-align: center; }
+.load-status.ok { color: #6ed98a; }
+.load-status.err { color: #f87171; }
+
+/* Chat area */
 .chat-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
 .msg { display: flex; gap: 10px; max-width: 100%; }
 .msg.user { flex-direction: row-reverse; align-self: flex-end; max-width: 80%; }
@@ -70,23 +82,17 @@ nav .spacer { flex: 1; }
 .countdown-card .cd-units { font-size: 11px; color: #888; margin-top: 4px; }
 .countdown-card .cd-edit { position: absolute; top: 10px; right: 12px; color: #555; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
 .countdown-card.passed { opacity: 0.4; }
-
 .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
 .course-card { background: #181b27; border: 1px solid #262a3a; border-radius: 12px; padding: 20px; border-left: 3px solid; }
 .cc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .cc-badge { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
 .cc-name { font-size: 15px; font-weight: 600; }
 .cc-meta { font-size: 11px; color: #888; margin-top: 1px; }
-
-/* Pass callout — simple green */
 .pass-callout { background: #15291a; border: 1px solid #2a5040; border-radius: 8px; padding: 11px 14px; margin-bottom: 14px; }
 .pass-callout .pc-value { font-size: 15px; font-weight: 600; color: #6ed98a; line-height: 1.4; }
-
-/* Family message */
 .family-message { background: #14261a; border: 1px solid #234d33; border-radius: 10px; padding: 16px 22px; margin-bottom: 32px; display: flex; gap: 32px; flex-wrap: wrap; }
 .fm-msg { font-size: 14px; color: #a8dcb8; font-style: italic; line-height: 1.5; }
 .fm-msg .fm-from { color: #6da585; font-style: normal; font-weight: 500; margin-left: 8px; }
-
 .grade-table { border-top: 1px solid #232634; padding-top: 4px; }
 .grade-row { display: grid; grid-template-columns: 1fr 70px 60px; gap: 10px; align-items: center; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #20232f; }
 .grade-row:last-child { border-bottom: none; }
@@ -95,14 +101,11 @@ nav .spacer { flex: 1; }
 .grade-row input.empty { background: #221915; border-color: #4a3520; }
 .grade-row .gr-name { color: #c4c6d0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .grade-row .gr-weight { color: #666; font-size: 11px; text-align: right; }
-
 .note-line { margin-top: 14px; padding: 8px 12px; background: #2a1d0d; border: 1px solid #553817; border-radius: 6px; font-size: 11px; color: #d0a060; line-height: 1.45; }
-
 .current-stats { margin-top: 14px; padding-top: 14px; border-top: 1px solid #232634; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .stat-line { font-size: 11px; }
 .stat-line .sl-label { color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
 .stat-line .sl-value { font-size: 17px; font-weight: 600; color: #fff; }
-
 .higher-targets { margin-top: 14px; padding-top: 12px; border-top: 1px solid #232634; }
 .higher-targets .ht-label { font-size: 11px; color: #777; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 .target-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
@@ -112,7 +115,6 @@ nav .spacer { flex: 1; }
 .target-row .tr-val.medium { color: #4ea872; }
 .target-row .tr-val.hard { color: #3d7a4d; }
 .target-row .tr-val.impossible { color: #3d7a4d; }
-
 .dash-header-top { margin-bottom: 28px; }
 .dash-header-top h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
 .dash-header-top p { color: #888; font-size: 13px; }
@@ -126,7 +128,7 @@ nav .spacer { flex: 1; }
   <button data-tab="struct">Structures</button>
   <button data-tab="energy">Energy</button>
   <button data-tab="pave">Pavement</button>
-  <button data-tab="ground">Groundwater</button>
+  <button data-tab="ground">Water</button>
   <div class="spacer"></div>
   <button class="settings-btn" onclick="showSettings()">Settings</button>
 </nav>
@@ -154,14 +156,42 @@ nav .spacer { flex: 1; }
 <div id="tab-ground" class="tab-content"></div>
 
 <script>
+// ============ SESSION DEFINITIONS ============
+const SESSIONS = {
+  struct: [
+    { id: 'mod1', label: 'Module 1 — Beams', files: ['mod1.pdf', 'T1_Soln.pdf', 'T2_Soln.pdf'] },
+    { id: 'mod2', label: 'Module 2 — Frames', files: ['mod 2 frames.pdf', 'T3 Soln.pdf', 'T4 Soln.pdf'] },
+    { id: 'mod3', label: 'Module 3 — Virtual Work', files: ['mod3 energy.pdf', 'T5 Soln.pdf', 'T6_Soln.pdf'] },
+    { id: 'exam', label: 'Exam prep', files: ['ENCI335-25S1 Final Exam.pdf', 'E335Exam26Format.pdf'] },
+    { id: 'weeknotes', label: 'Week notes (all)', files: ['W1Notes_Th.pdf','W2Notes_Th.pdf','W3Notes_M.pdf','W3Notes_Th.pdf','W4Notes_M.pdf','W4Notes_Th.pdf','W5Notes_M.pdf','W5Notes_Th.pdf','W6Notes_M.pdf','W6Notes_Th_2025.pdf'] },
+  ],
+  energy: [
+    { id: 'solar', label: 'Solar PV', files: ['SOLAR/Lecture Slides - Solar Photovoltaics.pdf','SOLAR/Summary - Solar PV.pdf','SOLAR/Solar Practice Questions.pdf','SOLAR/Solar Practice Questions SOLUTIONS.pdf'] },
+    { id: 'batteries', label: 'Batteries & Storage', files: ['BATTERIES/Lecture Slides - Storage.pdf','BATTERIES/Summary - Battery.pdf','BATTERIES/Batteries Practice Questions.pdf','BATTERIES/Batteries Practice Questions SOLUTIONS.pdf'] },
+    { id: 'fuels', label: 'Fuels', files: ['FUELS/Lecture Slides - Fuels.pdf','FUELS/Summary - Fuels.pdf','FUELS/Practice_questions_fuels.pdf','FUELS/Practice_solutions_fuels.pdf','FUELS/Tutorial_fuel_questions.pdf'] },
+    { id: 'transport', label: 'Transport', files: ['TRANSPORT/Lecture Slides - Transport - Part I.pdf','TRANSPORT/Lecture Slides - Transport - Part II.pdf','TRANSPORT/Summary - Transport.pdf','TRANSPORT/ENCN423_Transport_Practice_problems.pdf','TRANSPORT/ENCN423_Transport_Practice_problems_Solutions.pdf'] },
+    { id: 'industry', label: 'Industry', files: ['INDUSTRY/Lecture Slides - Industry.pdf'] },
+    { id: 'practice', label: 'Formula sheet & practice tests', files: ['Formula Sheet 3 (1).pdf','practiceTest3.pdf','practiceTest3 solutions.pdf'] },
+  ],
+  pave: [
+    { id: 'term1a', label: 'Term 1 — Binder & Aggregates', files: ['01-ENCN415-Introduction to Pavement Design-2026_final.pdf','02-ENCN415-Bitumen-2026.pdf','03-ENCN415-Superpave Aggregates-2026.pdf','04-ENCN415-Volumetric Properties-2026 (003).pdf'] },
+    { id: 'term1b', label: 'Term 1 — Mix Design & Recycling', files: ['05-ENCN415-Superpave Mix Design-2026.pdf','06-ENCN415_ APRG18_2026.pdf','07-ENCN415-sustaniability Recycling.pdf','08-ENCN415-Hot in Place Recycling.pdf','09-ENCN415-Stabilisation-2014.pdf'] },
+    { id: 'term2a', label: 'Term 2 — Analysis', files: ['10-Materials Characterisation.pdf','11-Stresses in Flexible Pavements-2024.pdf','11a-ENCN415-Stressesin Flexible-2025.pdf','12-Stresses-strain-Rigid Pavements.pdf'] },
+    { id: 'term2b', label: 'Term 2 — Design & Traffic', files: ['13  Traffic-Loading for Flexible 2024.pdf','14-Austroads-ME_2026.pdf','16-Backcalculation -2024.pdf'] },
+    { id: 'tutorials', label: 'Tutorials', files: ['Tutorial 01-2024.pdf','Tutorial 1_2024_solutions.pdf','Tutorial_02-2026F.pdf','Tutorial_02_solution_2026.pdf','Tutorial 03-2024.pdf','Pavement quizzes.pdf'] },
+  ],
+  ground: [
+    { id: 'gw', label: 'Groundwater', files: ['GROUNDWATER/all lecture slides.pdf','GROUNDWATER/NOTES GW - GW systems.pdf','GROUNDWATER/Assignment Groundwater.pdf','GROUNDWATER/heathcote_model_instructions.pdf','GROUNDWATER/heathcote_model2_instructions.pdf'] },
+    { id: 'sw', label: 'Surface Water', files: ['SURFACEWATER/Reader-Hydrological Modelling.pdf','SURFACEWATER/Reader-Hydrological Modelling Solutions to Exercises.pdf','SURFACEWATER/1_HydrologicalModelling.pdf','SURFACEWATER/Reader-Hydraulic Modelling steady and unsteady 1D.pdf','SURFACEWATER/Reader-Hydraulic Modelling steady and unsteady 1D Solutions to Exercises.pdf','SURFACEWATER/2-Hydraulic Modelling steady.pdf','SURFACEWATER/3-Hydraulic Modelling unsteady.pdf'] },
+    { id: 'coastal', label: 'Coastal', files: ['COASTAL/Coastal_Engineering 3+4.pdf','COASTAL/Coastal_Tutorial2.pdf','COASTAL/Coastal_Tutorial2_solns.pdf','COASTAL/Coastal_Tutorial3.pdf','COASTAL/Coastal_Tutorial3_solns.pdf','COASTAL/Coastal_Tutorial4.pdf','COASTAL/Coastal_Tutorial4_solns.pdf'] },
+    { id: 'infra', label: 'Water Infrastructure', files: ['SURFACEWATER INFRASTRUCTURE/Hyd Structures Intro.pdf','SURFACEWATER INFRASTRUCTURE/Culvert Design - 2023.pdf','SURFACEWATER INFRASTRUCTURE/Chute Design - 2024.pdf','SURFACEWATER INFRASTRUCTURE/SAMPLE EXAM QUESTIONS for Water Infrastructure.pdf','SURFACEWATER INFRASTRUCTURE/ENCN442 review 2026.pdf','SURFACEWATER INFRASTRUCTURE/Example sediment transport problems and solutions ENCN442.pdf','SURFACEWATER INFRASTRUCTURE/Chapter-07.pdf','SURFACEWATER INFRASTRUCTURE/Chapter-08.pdf'] },
+  ]
+};
+
 // ============ CONFIG ============
 const COURSES = {
   struct: {
-    name: 'Structures',
-    code: 'ENCI335',
-    badge: 'S',
-    color: '#5a8dd9',
-    bg: '#1d2c44',
+    name: 'Structures', code: 'ENCI335', badge: 'S', color: '#5a8dd9', bg: '#1d2c44',
     meta: 'Final exam Jun 17 (Part 2)',
     examDate: '2026-06-17T09:00:00',
     quickActions: [
@@ -170,7 +200,7 @@ const COURSES = {
       { label: 'Module 3: Virtual work', prompt: 'Explain the principle of virtual work and the unit load method for finding deflections in beams, frames and trusses' },
       { label: 'Moment Area Theorems', prompt: 'Walk me through the Moment Area Theorems with an example application' },
       { label: "Castigliano's theorems", prompt: "Explain Castigliano's theorems and their application to displacement calculations" },
-      { label: 'Sketching deflected shapes', prompt: 'How do I sketch deflected shapes and BMDs without doing calculations (engineering without numbers)?' },
+      { label: 'Sketching deflected shapes', prompt: 'How do I sketch deflected shapes and BMDs without doing calculations?' },
       { label: 'Common exam traps', prompt: 'What are the most common mistakes in Part 2 exam questions?' }
     ],
     assessments: [
@@ -182,26 +212,22 @@ const COURSES = {
     ],
     passNote: 'Need at least 40% in both mid-sem test and final exam to pass.',
     defaultGrades: { mid: '46.7', a1: '95' },
-    systemPrompt: `You are a tutor for ENCI335 (Structural Analysis and Systems 1) at University of Canterbury. The upcoming final exam covers PART 2 ONLY (Analysis of Indeterminate Structures, taught by Assoc. Prof. Chin-Long Lee). Part 1 (Dynamics, by Prof. Bradley) was in the mid-sem test and is NOT in the final exam.
+    systemPrompt: `You are a tutor for ENCI335 (Structural Analysis and Systems 1) at University of Canterbury. The upcoming final exam covers PART 2 ONLY (Analysis of Indeterminate Structures). Part 1 (Dynamics) was in the mid-sem test and is NOT in the final exam.
 
 Part 2 modules:
-- MODULE 1: Force/Flexibility method for indeterminate beams — support types, stability/indeterminacy, small displacement theory, superposition, sketching deflected shapes and BMDs, general force method (primary structure, redundants, compatibility), double integration, Moment Area Theorems.
+- MODULE 1: Force/Flexibility method for indeterminate beams — support types, stability/indeterminacy, superposition, sketching deflected shapes and BMDs, general force method (primary structure, redundants, compatibility), double integration, Moment Area Theorems.
 - MODULE 2: Determinate and Indeterminate Frames — AFD/SFD/BMD of determinate frames, degree of indeterminacy, sketching frame deflected shapes, frame rotations via Moment Area, force method for indeterminate frames.
-- MODULE 3: Energy methods and virtual work — external work and strain energy, strain energy for axial/shear/bending/torsion, work-energy principle, Betti's law, Maxwell's reciprocal theorem, Castigliano's theorems, virtual displacement/force principles, unit load method for trusses/beams/frames.
+- MODULE 3: Energy methods and virtual work — strain energy, work-energy principle, Betti's law, Maxwell's reciprocal theorem, Castigliano's theorems, virtual displacement/force principles, unit load method for trusses/beams/frames.
 - MODULE 4: Structural forms of buildings.
 
 For tutorial questions: identify the module, walk through using the lecturer's approach from the loaded solutions, state the sign convention used in the notes, give hints first, full solution only on request.`
   },
   energy: {
-    name: 'Energy Systems',
-    code: 'ENCN423',
-    badge: 'E',
-    color: '#54b577',
-    bg: '#1c3329',
+    name: 'Energy Systems', code: 'ENCN423', badge: 'E', color: '#54b577', bg: '#1c3329',
     meta: 'Test 3 Mon Jun 15 (30%)',
     examDate: '2026-06-15T09:00:00',
     quickActions: [
-      { label: 'Generate practice question', prompt: 'Generate a practice test question in the style of past ENCN423 tests, pick a random topic from the loaded notes. Show the question only — wait for my attempt before giving the solution.', special: true },
+      { label: 'Generate practice question', prompt: 'Generate a practice test question in the style of past ENCN423 tests. Show the question only — wait for my attempt before giving the solution.', special: true },
       { label: 'Module summary', prompt: 'Give me a summary of the key learning outcomes for each topic covered in ENCN423' },
       { label: 'Solar resource calcs', prompt: 'Walk me through how to do solar resource analysis and preliminary sizing' },
       { label: 'Wind energy fundamentals', prompt: 'Explain the key wind energy theory — power curves, Betz limit, capacity factor' },
@@ -216,25 +242,19 @@ For tutorial questions: identify the module, walk through using the lecturer's a
     defaultGrades: { t1: '59', t2: '50', tut: '22.22' },
     systemPrompt: `You are a tutor for ENCN423 (Sustainable Energy Technologies) at University of Canterbury. Focus: deep theoretical understanding and calculations.
 
-Topics: Introduction, Wind, Hydropower, Geothermal, Biomass, Solar, Energy Storage, Transport, Heat, Industry/renewable fuels, Fuels.
+Topics: Wind, Hydropower, Geothermal, Biomass, Solar, Energy Storage, Transport, Heat, Industry, Fuels.
 
-Behaviour:
-- For concept questions: explain thoroughly with the physics, draw connections across topics, provide equations with all terms defined.
+- For concept questions: explain thoroughly with the physics, provide equations with all terms defined.
 - For calculations: work through step by step using the methods in the loaded notes.
-- When asked to GENERATE A PRACTICE QUESTION: create one in the style of past tests using the uploaded materials, mix conceptual and calculation questions, show the question only and wait for the attempt before marking.
-- When marking attempts: be rigorous but kind, identify errors clearly, explain why.
-- For exam strategy: reference patterns from past tests/exams in the loaded materials.`
+- When asked to GENERATE A PRACTICE QUESTION: create one in the style of past tests, show the question only and wait for the attempt before marking.
+- When marking attempts: be rigorous but kind, identify errors clearly, explain why.`
   },
   pave: {
-    name: 'Pavement Engineering',
-    code: 'ENCN415',
-    badge: 'P',
-    color: '#d4823e',
-    bg: '#3a2618',
+    name: 'Pavement Engineering', code: 'ENCN415', badge: 'P', color: '#d4823e', bg: '#3a2618',
     meta: 'Final exam (40%) — covers both terms',
     examDate: '',
     quickActions: [
-      { label: 'Term 1 to Term 2 connections', prompt: 'Map out how Term 1 topics (Superpave, mix design, materials) connect to Term 2 topics (stresses/strains, traffic, mechanistic design). Show me the dependency chain.' },
+      { label: 'Term 1 to Term 2 connections', prompt: 'Map out how Term 1 topics connect to Term 2 topics. Show me the dependency chain.' },
       { label: 'Superpave mix design', prompt: 'Explain the Superpave mix design process from start to finish' },
       { label: 'Westergaard method', prompt: 'Walk me through the Westergaard method for rigid pavement analysis with formulas' },
       { label: 'Mechanistic-empirical design', prompt: 'Explain the mechanistic-empirical design process for flexible pavements' },
@@ -251,23 +271,15 @@ Behaviour:
       { name: 'Lab Report', weight: 8, key: 'lab' }
     ],
     defaultGrades: { mid: '77.33', q1: '44.63', q2: '54.17', q3: '60', q4: '96.43', lab: '50' },
-    systemPrompt: `You are a tutor for ENCN415 (Pavement Engineering) at University of Canterbury. The final exam covers BOTH terms — Term 2 builds on Term 1, so surface those connections proactively.
+    systemPrompt: `You are a tutor for ENCN415 (Pavement Engineering) at University of Canterbury. The final exam covers BOTH terms — Term 2 builds on Term 1, surface those connections proactively.
 
-Term 1: pavement types/distresses, Superpave characterisation (binder + aggregates), volumetric properties, Superpave mix design, APRG18 mix design, recycling (RAP, HIP, RIP).
-Term 2: material characterisation, multilayer flexible pavement analysis (stresses/strains/deflections), rigid pavements (Westergaard), traffic loading and ESAs, mechanistic-empirical design, deflection analysis and backcalculation (FWD).
+Term 1: pavement types/distresses, Superpave characterisation, volumetric properties, Superpave mix design, APRG18, recycling (RAP, HIP, RIP).
+Term 2: material characterisation, multilayer flexible pavement analysis, rigid pavements (Westergaard), traffic loading and ESAs, mechanistic-empirical design, deflection analysis and backcalculation (FWD).
 
-For every question:
-- Identify the term and topic.
-- Flag prerequisite Term 1 concepts when answering Term 2 questions (e.g. "this stress calc needs the resilient modulus from material characterisation, which depends on mix volumetrics from Term 1").
-- State relevant formulas from the loaded notes (Westergaard, Boussinesq, Odemark, fatigue/rutting damage equations, ESA calcs).
-- Hints first, full solutions only on request.`
+For every question: identify term and topic, flag prerequisite Term 1 concepts when answering Term 2 questions, state relevant formulas. Hints first, full solutions only on request.`
   },
   ground: {
-    name: 'Water Engineering',
-    code: 'ENCN442',
-    badge: 'W',
-    color: '#4cb2d4',
-    bg: '#15303a',
+    name: 'Water Engineering', code: 'ENCN442', badge: 'W', color: '#4cb2d4', bg: '#15303a',
     meta: 'Final exam (60%) — July resit week',
     examDate: '',
     quickActions: [
@@ -286,59 +298,27 @@ For every question:
     ],
     defaultGrades: { gw: '0', swm: '91' },
     passNote: 'Coastal Engineering grade pending — Research Project 81.3% + Design Project 90% submitted.',
-    systemPrompt: `You are a tutor for ENCN442 (Surface Water, Groundwater and Coastal Engineering) at University of Canterbury. Comprehensive final exam covers all four sections.
+    systemPrompt: `You are a tutor for ENCN442 (Surface Water, Groundwater and Coastal Engineering) at University of Canterbury. The final exam covers all four sections.
 
-The loaded materials are organised into four folders matching the four course sections — refer to these folder names when citing:
+1. GROUNDWATER — recharge/discharge, well hydraulics, drawdown, safe yield, MODFLOW.
+2. SURFACEWATER — rainfall-runoff, catchment characteristics, climate change impacts, HEC-HMS.
+3. COASTAL — surface waves, wave modelling, tides, sediment transport, sea level rise. Coastal section in the 2026 exam is only ~35 minutes, expect fewer/smaller questions. For wave height analysis, use 1.67·Hs for the 1/100 wave height (Rayleigh distribution).
+4. SURFACEWATER INFRASTRUCTURE — earth channels, culverts, drop structures. Equations provided with exam — know how to apply them, not memorise them.
 
-1. GROUNDWATER/ (Prof Weingarten) — recharge/discharge, well hydraulics, drawdown, safe yield, unsaturated zone, groundwater quality, surface-groundwater interactions, numerical modelling (MODFLOW). Exam questions in this section will be similar to past exam papers.
-
-2. SURFACEWATER/ (Dr Pahlow) — rainfall-runoff, soil-plant-atmosphere continuum, catchment characteristics, climate change impacts, modelling (HEC-HMS). Mock exam questions are included in the loaded materials — reference these when generating practice questions.
-
-3. COASTAL/ (Dr McConnochie) — surface waves, wave modelling, tides, sediment transport, erosion, sea level rise. Past ENCN446 exams (last 3 years) are loaded — coastal was previously part of ENCN446. IMPORTANT: Coastal section in the 2026 ENCN442 exam is only ~35 minutes (was 80 min in ENCN446), so expect fewer and smaller questions than past papers show. For wave height analysis, use 1.67·Hs for the 1/100 wave height with assumed Rayleigh distribution (this was flagged as a common student error).
-
-4. SURFACEWATER INFRASTRUCTURE/ (Prof Cochrane) — earth channels, culverts, bridges, drop structures. Review lecture PDF + sample/mock exam questions are loaded. Exam questions will be similar to past exam papers.
-
-EXAM FORMAT NOTE: Equations, diagrams, and tables are PROVIDED with the exam. The student doesn't need to memorize formulas — but must know how to apply them, when to use which equation, and what the variables mean.
-
-For each question:
-- Identify which section folder the question belongs to (state explicitly).
-- Cite specific lecture content from the loaded notes.
-- Reference past papers (COASTAL/ folder) when working through coastal problems.
-- Reference the mock exam questions where relevant.
-- Surface connections between sections where useful (e.g. groundwater discharge to streams connects GROUNDWATER + SURFACEWATER).
-- Hints first, full solutions only when asked.
-
-Common errors to flag: unit consistency (SI vs imperial), drawdown sign convention, wave parameter regimes (deep vs shallow water), culvert flow control type (inlet vs outlet), reference citations (use full citation not just URL).`
+For each question: identify which section, cite specific lecture content, hints first, full solutions when asked.`
   }
 };
 
 // ============ STATE ============
 const KEY = 'study_tutor_';
-let model = localStorage.getItem(KEY+'model') || 'anthropic/claude-sonnet-4-5';
+let model = localStorage.getItem(KEY+'model') || 'google/gemini-2.5-flash';
 
-const PDF_MANIFEST = {
-  struct: [],
-  energy: [],
-  pave: [],
-  ground: []
-};
-const loadedCourses = new Set();
-
-const BASE_PROMPT = `CRITICAL RULES — FOLLOW THESE WITHOUT EXCEPTION:
-
-1. SOURCE-GROUNDED ONLY. Your answers must come from the uploaded lecture notes, slides, and tutorial solutions provided in this conversation. Do NOT introduce theory, formulas, methods, or sign conventions that aren't in the materials. If something isn't in the loaded notes, do not invent it from general engineering knowledge.
-
-2. CITE EVERYTHING. When stating a rule, formula, or step, cite the document and location (e.g. "From module2-slides.pdf, slide 14..." or "Per T3-solutions.pdf, step 2..."). Filenames of all loaded documents are visible to you as document titles.
-
-3. USE THE LECTURER'S APPROACH. When walking through a tutorial question, follow the method in the provided solutions document — use the lecturer's notation, sign conventions, and step order.
-
-4. ADMIT GAPS EXPLICITLY. If a question or topic isn't covered in the loaded materials, say so directly. Do not silently fall back to general knowledge.
-
-5. PREFER QUOTES OVER PARAPHRASE. Where useful, quote a short relevant passage from the notes directly (with citation) rather than restating it in your own words.
-
-6. NO INVENTED EXAMPLES. Don't generate practice problems with made-up numbers unless explicitly asked. Reference real tutorial questions from the loaded materials.
-
-The course-specific guidance below operates within these rules — they are not overridden by anything that follows.
+const BASE_PROMPT = `CRITICAL RULES:
+1. SOURCE-GROUNDED ONLY. Answers must come from uploaded lecture notes and tutorial solutions. Do not introduce theory or formulas not in the materials.
+2. CITE EVERYTHING. When stating a rule, formula, or step, cite the document and location.
+3. USE THE LECTURER'S APPROACH. Follow the method in provided solutions — use the lecturer's notation and sign conventions.
+4. ADMIT GAPS EXPLICITLY. If a topic isn't in the loaded materials, say so. Do not fall back to general knowledge.
+5. HINTS FIRST. Give hints before full solutions unless the student explicitly asks for the full answer.
 
 ---
 
@@ -350,6 +330,7 @@ for (const k of Object.keys(COURSES)) {
   state[k] = {
     history: JSON.parse(localStorage.getItem(KEY+k+'_hist') || '[]'),
     files: {},
+    selectedSessions: new Set(),
     grades: storedGrades ? JSON.parse(storedGrades) : (COURSES[k].defaultGrades || {})
   };
   if (!storedGrades && COURSES[k].defaultGrades) {
@@ -366,16 +347,23 @@ document.querySelectorAll('nav button[data-tab]').forEach(b => {
     const tab = b.dataset.tab;
     document.getElementById('tab-'+tab).classList.add('active');
     if (tab === 'dash') renderDash();
-    else autoLoadPdfs(tab);
   });
 });
 
 // ============ COURSE RENDER ============
 function renderCourse(key) {
   const c = COURSES[key];
+  const sessions = SESSIONS[key] || [];
   const tab = document.getElementById('tab-'+key);
+
+  // Group sessions into columns of ~3
+  const cols = [];
+  for (let i = 0; i < sessions.length; i += 3) {
+    cols.push(sessions.slice(i, i + 3));
+  }
+
   tab.innerHTML = `
-    <div class="course-header">
+    <div class="course-header" style="--course-color:${c.color}">
       <div class="course-badge" style="background:${c.color}">${c.badge}</div>
       <div>
         <h1>${c.code} — ${c.name}</h1>
@@ -383,11 +371,23 @@ function renderCourse(key) {
       </div>
       <button class="clear" onclick="clearHistory('${key}')">Clear chat</button>
     </div>
-    <div class="files-bar">
-      <label>Notes:</label>
-      <div id="${key}-chips" style="display:contents"></div>
-      <button class="upload-btn" onclick="document.getElementById('${key}-upload').click()">Add PDFs</button>
-      <input type="file" id="${key}-upload" accept=".pdf" multiple style="display:none">
+    <div class="session-panel" style="--course-color:${c.color}" id="${key}-session-panel">
+      ${cols.map(col => `
+        <div class="session-col">
+          <div class="session-col-label">Select sessions</div>
+          ${col.map(s => `
+            <button class="session-btn" id="${key}-sess-${s.id}" onclick="toggleSession('${key}','${s.id}')">
+              <span class="sb-check">✓</span>
+              <span>${s.label}</span>
+              <span class="sb-count">${s.files.length}f</span>
+            </button>
+          `).join('')}
+        </div>
+      `).join('')}
+      <div class="session-actions">
+        <button class="load-btn" id="${key}-load-btn" style="background:${c.color}" onclick="loadSelectedSessions('${key}')">Load selected</button>
+        <div class="load-status" id="${key}-load-status"></div>
+      </div>
     </div>
     <div class="chat-area" id="${key}-chat"></div>
     <div class="quick-btns" id="${key}-quick">
@@ -398,37 +398,86 @@ function renderCourse(key) {
       <button class="send-btn" onclick="sendMessage('${key}')">↑</button>
     </div>
   `;
-  document.getElementById(key+'-upload').addEventListener('change', e => handleUpload(e, key));
   renderChat(key);
-  renderChips(key);
+  updateLoadStatus(key);
 }
 
+function toggleSession(key, sessionId) {
+  const s = state[key].selectedSessions;
+  if (s.has(sessionId)) s.delete(sessionId);
+  else s.add(sessionId);
+  const btn = document.getElementById(`${key}-sess-${sessionId}`);
+  if (btn) btn.classList.toggle('selected', s.has(sessionId));
+}
+
+async function loadSelectedSessions(key) {
+  const sessions = SESSIONS[key] || [];
+  const selected = sessions.filter(s => state[key].selectedSessions.has(s.id));
+  if (selected.length === 0) {
+    setLoadStatus(key, 'Select at least one session', false);
+    return;
+  }
+
+  const allFiles = [...new Set(selected.flatMap(s => s.files))];
+  const loadBtn = document.getElementById(key+'-load-btn');
+  loadBtn.disabled = true;
+  setLoadStatus(key, 'Loading…', null);
+
+  // Clear existing files
+  state[key].files = {};
+
+  let loaded = 0;
+  for (const filename of allFiles) {
+    try {
+      setLoadStatus(key, `Loading ${loaded+1}/${allFiles.length}…`, null);
+      const pathEncoded = filename.split('/').map(encodeURIComponent).join('/');
+      const resp = await fetch(`notes/${key}/${pathEncoded}`);
+      if (!resp.ok) { console.warn(`404: ${filename}`); continue; }
+      const blob = await resp.blob();
+      const b64 = await blobToBase64(blob);
+      state[key].files[filename] = b64;
+      loaded++;
+    } catch(err) {
+      console.warn(`Failed: ${filename}`, err);
+    }
+  }
+
+  loadBtn.disabled = false;
+  updateLoadStatus(key);
+
+  if (loaded === 0) {
+    setLoadStatus(key, 'No files found — check paths', false);
+  } else {
+    setLoadStatus(key, `${loaded} file${loaded>1?'s':''} ready`, true);
+    // Reset history so next message sends files fresh
+    state[key].history = state[key].history.filter(m => typeof m.content === 'string');
+  }
+}
+
+function setLoadStatus(key, msg, ok) {
+  const el = document.getElementById(key+'-load-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'load-status' + (ok === true ? ' ok' : ok === false ? ' err' : '');
+}
+
+function updateLoadStatus(key) {
+  const count = Object.keys(state[key].files).length;
+  const fc = document.getElementById(key+'-fc');
+  if (fc) fc.textContent = count ? `${count} file${count>1?'s':''} loaded` : 'No notes loaded';
+}
+
+// ============ CHAT ============
 function renderChat(key) {
   const chat = document.getElementById(key+'-chat');
   if (!chat) return;
   chat.innerHTML = '';
   const c = COURSES[key];
   if (state[key].history.length === 0) {
-    addMsgEl(key, 'assistant', `Hi! I'm your ${c.code} tutor.\n\nI'll only reference your loaded lecture notes and tutorial solutions — no inventing theory or methods. Upload your PDFs above, then ask anything. Use the quick buttons or type your own question.`);
+    addMsgEl(key, 'assistant', `Hi! I'm your ${c.code} tutor.\n\nSelect one or more sessions from the panel above and hit "Load selected" — then ask anything. I'll only reference your loaded notes.`);
   } else {
     state[key].history.forEach(m => addMsgEl(key, m.role, typeof m.content === 'string' ? m.content : m.content.find(b => b.type==='text')?.text || ''));
   }
-}
-
-function renderChips(key) {
-  const c = document.getElementById(key+'-chips');
-  if (!c) return;
-  c.innerHTML = '';
-  const names = Object.keys(state[key].files);
-  names.forEach(name => {
-    const chip = document.createElement('div');
-    chip.className = 'file-chip';
-    const safe = name.replace(/"/g, '&quot;').replace(/'/g, "\\'");
-    chip.innerHTML = `<span>${name}</span> <button onclick="removeFile('${key}','${safe}')">×</button>`;
-    c.appendChild(chip);
-  });
-  const fc = document.getElementById(key+'-fc');
-  if (fc) fc.textContent = names.length ? `${names.length} file${names.length>1?'s':''} loaded` : 'No notes loaded';
 }
 
 function addMsgEl(key, role, text) {
@@ -450,85 +499,16 @@ function addMsgEl(key, role, text) {
   return bub;
 }
 
-// ============ UPLOAD ============
-async function handleUpload(e, key) {
-  for (const file of e.target.files) {
-    const b64 = await toBase64(file);
-    state[key].files[file.name] = b64;
-  }
-  renderChips(key);
-  e.target.value = '';
-}
-function toBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
-function removeFile(key, name) {
-  delete state[key].files[name];
-  renderChips(key);
-}
-
-// ============ AUTO-LOAD PDFs ============
-async function autoLoadPdfs(key) {
-  if (loadedCourses.has(key)) return;
-  loadedCourses.add(key);
-  const files = PDF_MANIFEST[key] || [];
-  if (files.length === 0) return;
-  const fc = document.getElementById(key+'-fc');
-  let loaded = 0;
-  for (const filename of files) {
-    if (state[key].files[filename]) { loaded++; continue; }
-    try {
-      if (fc) fc.textContent = `Loading ${loaded+1}/${files.length}: ${filename}`;
-      // Encode each path segment separately so subfolders work (e.g. "COASTAL/file.pdf")
-      const pathEncoded = filename.split('/').map(encodeURIComponent).join('/');
-      const resp = await fetch(`notes/${key}/${pathEncoded}`);
-      if (!resp.ok) { console.warn(`Could not load ${filename}: HTTP ${resp.status}`); continue; }
-      const blob = await resp.blob();
-      const b64 = await blobToBase64(blob);
-      state[key].files[filename] = b64;
-      loaded++;
-      renderChips(key);
-    } catch (err) {
-      console.warn(`Failed to load ${filename}:`, err);
-    }
-  }
-  renderChips(key);
-}
-function blobToBase64(blob) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onloadend = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(blob);
-  });
-}
-
-// ============ SETTINGS ============
-function showSettings() {
-  const m = prompt('Model (current: '+model+')\nCommon options:\nanthropic/claude-sonnet-4-5\nanthropic/claude-opus-4\nanthropic/claude-3.5-sonnet', model);
-  if (m && m.trim()) { model = m.trim(); localStorage.setItem(KEY+'model', model); alert('Model updated to: '+model); }
-}
-
-// ============ INPUT ============
 function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 function handleKey(e, key) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(key); } }
-function quickSend(key, text) {
-  document.getElementById(key+'-input').value = text;
-  sendMessage(key);
-}
+function quickSend(key, text) { document.getElementById(key+'-input').value = text; sendMessage(key); }
 function clearHistory(key) {
-  if (!confirm('Clear chat history for this course?')) return;
+  if (!confirm('Clear chat history?')) return;
   state[key].history = [];
   localStorage.removeItem(KEY+key+'_hist');
   renderChat(key);
 }
 
-// ============ CHAT ============
 async function sendMessage(key) {
   const input = document.getElementById(key+'-input');
   const text = input.value.trim();
@@ -536,24 +516,28 @@ async function sendMessage(key) {
   input.value = '';
   input.style.height = 'auto';
   addMsgEl(key, 'user', text);
+
   const fileNames = Object.keys(state[key].files);
-  let userContent;
   const hasFiles = fileNames.length > 0;
-  const isFirstWithFiles = hasFiles && !state[key].history.some(m => Array.isArray(m.content));
-  if (isFirstWithFiles) {
+  const alreadySentFiles = state[key].history.some(m => Array.isArray(m.content));
+
+  let userContent;
+  if (hasFiles && !alreadySentFiles) {
     userContent = [
       ...fileNames.map(name => ({
-        type: 'file',
-        file: { filename: name, file_data: `data:application/pdf;base64,${state[key].files[name]}` }
+        type: 'image_url',
+        image_url: { url: `data:application/pdf;base64,${state[key].files[name]}` }
       })),
       { type: 'text', text }
     ];
   } else {
     userContent = text;
   }
+
   state[key].history.push({ role: 'user', content: userContent });
-  const thinkBubble = addMsgEl(key, 'assistant', 'Thinking...');
+  const thinkBubble = addMsgEl(key, 'assistant', 'Thinking…');
   thinkBubble.classList.add('thinking');
+
   try {
     const messages = [
       { role: 'system', content: BASE_PROMPT + COURSES[key].systemPrompt },
@@ -571,6 +555,7 @@ async function sendMessage(key) {
     thinkBubble.textContent = reply;
     state[key].history.push({ role: 'assistant', content: reply });
     saveHistory(key);
+    updateLoadStatus(key);
   } catch (err) {
     thinkBubble.classList.remove('thinking');
     thinkBubble.textContent = `Error: ${err.message}`;
@@ -578,12 +563,29 @@ async function sendMessage(key) {
     state[key].history.pop();
   }
 }
+
 function saveHistory(key) {
   const trimmed = state[key].history.map(m => {
     if (typeof m.content === 'string') return m;
     return { role: m.role, content: m.content.filter(b => b.type === 'text') };
   });
-  try { localStorage.setItem(KEY+key+'_hist', JSON.stringify(trimmed)); } catch(e) { console.warn('History too large to save'); }
+  try { localStorage.setItem(KEY+key+'_hist', JSON.stringify(trimmed)); } catch(e) { console.warn('History too large'); }
+}
+
+// ============ FILE UTILS ============
+function blobToBase64(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onloadend = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(blob);
+  });
+}
+
+// ============ SETTINGS ============
+function showSettings() {
+  const m = prompt('Model (current: '+model+')\nCommon options:\ngoogle/gemini-2.5-flash\ngoogle/gemini-2.5-pro\nanthropic/claude-sonnet-4-5', model);
+  if (m && m.trim()) { model = m.trim(); localStorage.setItem(KEY+'model', model); alert('Model updated to: '+model); }
 }
 
 // ============ DASHBOARD ============
@@ -606,20 +608,20 @@ function renderCountdown() {
       const diff = exam - now;
       if (diff < 0) {
         card.className += ' passed';
-        card.innerHTML = `<div class="cd-edit">edit</div><div class="cd-course">${c.code}</div><div class="cd-time" style="font-size:17px">Passed</div><div class="cd-units">${exam.toLocaleDateString('en-NZ', {weekday:'short', day:'numeric', month:'short'})}</div>`;
+        card.innerHTML = `<div class="cd-edit">edit</div><div class="cd-course">${c.code}</div><div class="cd-time" style="font-size:17px">Passed</div><div class="cd-units">${exam.toLocaleDateString('en-NZ',{weekday:'short',day:'numeric',month:'short'})}</div>`;
       } else {
-        const days = Math.floor(diff / 86400000);
-        const hours = Math.floor((diff % 86400000) / 3600000);
-        const mins = Math.floor((diff % 3600000) / 60000);
+        const days = Math.floor(diff/86400000);
+        const hours = Math.floor((diff%86400000)/3600000);
+        const mins = Math.floor((diff%3600000)/60000);
         if (days < 1) card.className += ' critical';
         else if (days < 3) card.className += ' urgent';
         let timeStr, unitStr;
         if (days >= 1) {
           timeStr = `${days}d ${hours}h`;
-          unitStr = exam.toLocaleDateString('en-NZ', {weekday:'long', day:'numeric', month:'short'}) + ' · ' + exam.toLocaleTimeString('en-NZ', {hour:'2-digit', minute:'2-digit'});
+          unitStr = exam.toLocaleDateString('en-NZ',{weekday:'long',day:'numeric',month:'short'})+' · '+exam.toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});
         } else {
           timeStr = `${hours}h ${mins}m`;
-          unitStr = 'Today · ' + exam.toLocaleTimeString('en-NZ', {hour:'2-digit', minute:'2-digit'});
+          unitStr = 'Today · '+exam.toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});
         }
         card.innerHTML = `<div class="cd-edit">edit</div><div class="cd-course">${c.code}</div><div class="cd-time">${timeStr}</div><div class="cd-units">${unitStr}</div>`;
       }
@@ -632,15 +634,10 @@ function editExamDate(k) {
   const c = COURSES[k];
   const current = localStorage.getItem(KEY+k+'_examDate') || c.examDate;
   const dateStr = current ? new Date(current).toISOString().slice(0,16) : '';
-  const input = prompt(`${c.code} exam date & time (YYYY-MM-DDTHH:MM, 24h):\nEnter "clear" to remove.`, dateStr);
+  const input = prompt(`${c.code} exam date & time (YYYY-MM-DDTHH:MM):\nEnter "clear" to remove.`, dateStr);
   if (input === null) return;
-  if (input.trim() === 'clear' || input.trim() === '') {
-    localStorage.removeItem(KEY+k+'_examDate');
-  } else {
-    const test = new Date(input);
-    if (isNaN(test.getTime())) { alert('Invalid date format. Use YYYY-MM-DDTHH:MM'); return; }
-    localStorage.setItem(KEY+k+'_examDate', input);
-  }
+  if (input.trim() === 'clear' || input.trim() === '') localStorage.removeItem(KEY+k+'_examDate');
+  else { const t = new Date(input); if (isNaN(t.getTime())) { alert('Invalid format'); return; } localStorage.setItem(KEY+k+'_examDate', input); }
   renderCountdown();
 }
 
@@ -653,27 +650,20 @@ function renderDash() {
     const g = state[k].grades;
     const completed = c.assessments.filter(a => g[a.key] !== undefined && g[a.key] !== '');
     const remaining = c.assessments.filter(a => g[a.key] === undefined || g[a.key] === '');
-    const earned = completed.reduce((s,a) => s + (parseFloat(g[a.key])/100) * a.weight, 0);
-    const completedWeight = completed.reduce((s,a) => s + a.weight, 0);
+    const earned = completed.reduce((s,a) => s + (parseFloat(g[a.key])/100)*a.weight, 0);
     const remainWeight = remaining.reduce((s,a) => s + a.weight, 0);
     const exam = c.assessments.find(a => a.isExam);
     const examPending = exam && (g[exam.key] === undefined || g[exam.key] === '');
-
-    // Simple green pass callout — encouraging tone
     let passCallout = '';
     if (examPending) {
-      const needOnExam = Math.max(0, ((50 - earned) / exam.weight) * 100);
+      const needOnExam = Math.max(0, ((50-earned)/exam.weight)*100);
       const examName = exam.name.replace(' (upcoming)','').replace(' — upcoming','');
-      const displayNeed = needOnExam <= 0
-        ? `You've already secured a pass — exam is a bonus`
-        : `${needOnExam.toFixed(1)}% on ${examName} to pass`;
+      const displayNeed = needOnExam <= 0 ? `Already secured a pass — exam is a bonus` : `${needOnExam.toFixed(1)}% on ${examName} to pass`;
       passCallout = `<div class="pass-callout"><div class="pc-value">${displayNeed}</div></div>`;
     } else if (remainWeight === 0) {
       passCallout = `<div class="pass-callout"><div class="pc-value">Final grade: ${earned.toFixed(1)}%</div></div>`;
     }
-
-    const targets = [60, 65, 70];
-    const targetLabels = ['B', 'B+', 'A-'];
+    const targets = [60,65,70]; const targetLabels = ['B','B+','A-'];
     const card = document.createElement('div');
     card.className = 'course-card';
     card.style.borderLeftColor = c.color;
@@ -686,43 +676,23 @@ function renderDash() {
       <div class="grade-table">
         ${c.assessments.map(a => {
           const v = g[a.key] !== undefined ? g[a.key] : '';
-          return `<div class="grade-row">
-            <span class="gr-name">${a.name}</span>
-            <input type="number" min="0" max="100" step="0.01" placeholder="—" value="${v}" class="${v===''?'empty':''}" oninput="updateGrade('${k}','${a.key}',this.value)" />
-            <span class="gr-weight">${a.weight}%</span>
-          </div>`;
+          return `<div class="grade-row"><span class="gr-name">${a.name}</span><input type="number" min="0" max="100" step="0.01" placeholder="—" value="${v}" class="${v===''?'empty':''}" oninput="updateGrade('${k}','${a.key}',this.value)" /><span class="gr-weight">${a.weight}%</span></div>`;
         }).join('')}
       </div>
       ${c.passNote ? `<div class="note-line">Note: ${c.passNote}</div>` : ''}
       <div class="current-stats">
-        <div class="stat-line"><div class="sl-label">Current</div><div class="sl-value">${completedWeight>0?earned.toFixed(1)+'%':'—'}</div></div>
+        <div class="stat-line"><div class="sl-label">Current</div><div class="sl-value">${completed.length>0?earned.toFixed(1)+'%':'—'}</div></div>
         <div class="stat-line"><div class="sl-label">Remaining weight</div><div class="sl-value">${remainWeight}%</div></div>
       </div>
-      ${remainWeight > 0 && examPending ? `<div class="higher-targets">
-        <div class="ht-label">Need on remaining work for higher grades</div>
-        ${targets.map((t,i) => {
-          const need = ((t - earned) / remainWeight) * 100;
-          let cls = 'easy';
-          if (need > 100) cls = 'impossible';
-          else if (need > 80) cls = 'hard';
-          else if (need > 60) cls = 'medium';
-          return `<div class="target-row">
-            <span class="tr-name">${targetLabels[i]} (${t}%)</span>
-            <span class="tr-val ${cls}">${need <= 0 ? 'Already secured' : need > 100 ? `Not possible` : need.toFixed(1) + '%'}</span>
-          </div>`;
-        }).join('')}
-      </div>` : ''}
+      ${remainWeight > 0 && examPending ? `<div class="higher-targets"><div class="ht-label">Need on remaining for higher grades</div>${targets.map((t,i)=>{const need=((t-earned)/remainWeight)*100;let cls='easy';if(need>100)cls='impossible';else if(need>80)cls='hard';else if(need>60)cls='medium';return`<div class="target-row"><span class="tr-name">${targetLabels[i]} (${t}%)</span><span class="tr-val ${cls}">${need<=0?'Already secured':need>100?'Not possible':need.toFixed(1)+'%'}</span></div>`;}).join('')}</div>` : ''}
     `;
     grid.appendChild(card);
   }
 }
 
 function updateGrade(courseKey, assessKey, val) {
-  if (val === '' || val === null) {
-    delete state[courseKey].grades[assessKey];
-  } else {
-    state[courseKey].grades[assessKey] = val;
-  }
+  if (val === '' || val === null) delete state[courseKey].grades[assessKey];
+  else state[courseKey].grades[assessKey] = val;
   localStorage.setItem(KEY+courseKey+'_grades', JSON.stringify(state[courseKey].grades));
   setTimeout(renderDash, 0);
 }
